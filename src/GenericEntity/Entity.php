@@ -16,7 +16,7 @@ class Entity
     {
         $errors = $this->_validate($spec, $data);
         if (count($errors) > 0) {
-            throw new \RuntimeException('Not valid data for the specification.');
+            throw new \GenericEntity\SpecException('Not valid data for the specification.', $errors);
         }
 
         $this->_spec = $spec;
@@ -51,8 +51,17 @@ class Entity
 
         $invalidFields = array_keys(array_diff_key($data, $specFields));
         if (count($invalidFields) > 0) {
-            $invalidFieldsStr = implode(', ', $invalidFields);
-            $errors[] = "Invalid fields $invalidFieldsStr.";
+            // Generate error message
+            $invalidFieldsStr = '\'' . implode('\', \'', $invalidFields) . '\'';
+            $validFieldsStr   = '\'' . implode('\', \'', array_keys($specFields)) . '\'';
+            if (count($invalidFields) === 1) {
+                $error = "Invalid field $invalidFieldsStr";
+            } else {
+                $error = "Invalid fields $invalidFieldsStr";
+            }
+            $error .= " (valid fields are $validFieldsStr).";
+
+            $errors[] = $error;
         }
 
         return $errors;
