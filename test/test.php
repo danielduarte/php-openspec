@@ -3,11 +3,20 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 
-$specFiles = glob(__DIR__ . '/cases/*.yml');
+echo '- Loading OpenApi 3.0.0 spec'. PHP_EOL;
+try {
+    $loader = new \OpenApi\SpecLoader();
+    echo 'Ok' . PHP_EOL;
+} catch (\GenericEntity\SpecException $ex) {
+    echo 'Errors:' . PHP_EOL;
+    echo '  - ' . implode(PHP_EOL . '  - ', $ex->getErrors()) . PHP_EOL;
+    exit(0);
+}
+echo PHP_EOL;
 
-$loader = new \OpenApi\SpecLoader();
+$specFiles = glob(__DIR__ . '/cases/*.yml');
 foreach ($specFiles as $filepath) {
-    echo '- Analizing spec in file $filepath'. PHP_EOL;
+    echo "- Analizing spec in file $filepath". PHP_EOL;
     try {
         $apiSpec = $loader
             ->load($filepath);

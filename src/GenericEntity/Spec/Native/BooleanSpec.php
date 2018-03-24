@@ -5,14 +5,14 @@ namespace GenericEntity\Spec\Native;
 use GenericEntity\Spec\Spec;
 
 
-class StringSpec implements Spec
+class BooleanSpec implements Spec
 {
     public function validate($value)
     {
-        $valid = is_string($value);
+        $valid = is_bool($value);
 
         if (!$valid) {
-            return ['Expected string value.'];
+            return ['Expected boolean value.'];
         } else {
             return [];
         }

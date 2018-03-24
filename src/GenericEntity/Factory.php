@@ -3,6 +3,7 @@
 namespace GenericEntity;
 
 use GenericEntity\Spec\Native\StringSpec;
+use GenericEntity\Spec\Native\BooleanSpec;
 use GenericEntity\Spec\ObjectSpec;
 
 
@@ -13,16 +14,13 @@ class Factory
     public function __construct()
     {
         // Add native specs
-        $this->addSpec('string', new StringSpec());
+        $this->addSpec('string',  new StringSpec());
+        $this->addSpec('boolean', new BooleanSpec());
     }
 
-    public function createSpec($name, $specMetadata)
+    public function createSpec($name, $specMetadata, $isExtensible)
     {
-        if (!$this->_validateSpec($specMetadata)) {
-            throw new \RuntimeException("Spec for $name not valid.");
-        }
-
-        $spec = new ObjectSpec($specMetadata);
+        $spec = new ObjectSpec($specMetadata, $isExtensible);
 
         $this->addSpec($name, $spec);
 
@@ -32,7 +30,7 @@ class Factory
     public function addSpec($name, $spec)
     {
         if (array_key_exists($name, $this->_specs)) {
-            throw new \RuntimeException("Spec $name already defined.");
+            throw new \RuntimeException("Spec '$name' already defined.");
         }
 
         $this->_specs[$name] = $spec;
@@ -43,16 +41,10 @@ class Factory
     public function getSpec($name)
     {
         if (!array_key_exists($name, $this->_specs)) {
-            throw new \RuntimeException("Spec $name does not exist.");
+            throw new \RuntimeException("Spec '$name' does not exist.");
         }
 
         return $this->_specs[$name];
-    }
-
-    protected function _validateSpec()
-    {
-        // @todo implement method
-        return true;
     }
 
     public function createEntity($name, $data)

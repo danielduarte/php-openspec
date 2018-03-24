@@ -24,7 +24,7 @@ class SpecLoader
 
         $userSpec = Yaml::parseFile($specFile);
         if ($userSpec === null) {
-            $errors[] = "Not valid Yaml format in file $specFile.";
+            $errors[] = "Not valid Yaml format in file '$specFile'.";
         } else {
 
             try {
@@ -36,7 +36,7 @@ class SpecLoader
         }
 
         if (count($errors) > 0) {
-            throw new SpecException("Invalid spec in file $specFile.", $errors);
+            throw new SpecException("Invalid spec in file '$specFile'.", $errors);
         }
 
         return $openapiUserSpec;
@@ -55,15 +55,26 @@ class SpecLoader
 
         $metaSpecOpenApi = [
             'openapi'      => ['type' => 'string'],
-            'info'         => ['type' => 'object'],
-            'servers'      => ['type' => 'array'],
-            'paths'        => ['type' => 'object'],
-            'components'   => ['type' => 'object'],
-            'security'     => ['type' => 'array'],
-            'tags'         => ['type' => 'array'],
-            'externalDocs' => ['type' => 'object'],
+            'info'         => ['type' => 'object',
+                               'fields' => [
+                                   'title' => ['type' => 'string'],
+                                   'description' => [],
+                                   'termsOfService' => [],
+                                   'contact' => [],
+                                   'license' => [],
+                                   'version' => []
+                               ],
+                              ],
+//            'servers'      => ['type' => 'array'],
+//            'paths'        => ['type' => 'object'],
+//            'components'   => ['type' => 'object'],
+//            'security'     => ['type' => 'array'],
+//            'tags'         => ['type' => 'array'],
+//            'externalDocs' => ['type' => 'object'],
         ];
 
-        return $entityFactory->createSpec(static::OPENAPI_SPEC_NAME, $metaSpecOpenApi);
+        $openApiSpec = $entityFactory->createSpec(static::OPENAPI_SPEC_NAME, $metaSpecOpenApi, false);
+
+        return $openApiSpec;
     }
 }

@@ -15,6 +15,6 @@ class ArraySpec implements Spec
     public function validate($value)
     {
         // @todo implement method
-        return true;
+        return [];
     }
 }
