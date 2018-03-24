@@ -3,29 +3,91 @@
 namespace GenericEntity\Spec;
 
 use GenericEntity\FactorySingleton;
+use GenericEntity\Spec\Native\AbstractNativeType;
 use GenericEntity\SpecException;
 
 
-class ObjectSpec implements Spec
+class ObjectSpec extends AbstractSpec
 {
-    protected $_metadata = [];
+    protected $_fieldsMetadata = [];
 
-    protected $_isExtensible = [];
+    protected $_isExtensible = false;
 
-    public function __construct(array $metadata, bool $isExtensible)
+
+    protected function _getRequiredMetakeys()
     {
-        $this->_isExtensible = $isExtensible;
-        $this->_metadata     = $metadata;
-
-        $errors = $this->_validateMetadata($metadata);
-        if (count($errors) > 0) {
-            throw new SpecException('Not valid specification.', $errors);
-        }
+        return ['type', 'fields'];
     }
 
-    public function getFields()
+    protected function _getOptionalMetakeys()
     {
-        return $this->_metadata;
+        return ['extensible'];
+    }
+
+    protected function _loadMetadata($metadata)
+    {
+        $errors = parent::_loadMetadata($metadata);
+
+
+        // Process metafields
+        $errorsType       = $this->_processMetafieldType($metadata);
+        $errorsFields     = $this->_processMetafieldFields($metadata);
+        $errorsExtensible = $this->_processMetafieldExtensible($metadata);
+
+        $errors = array_merge($errors, $errorsType, $errorsFields, $errorsExtensible);
+
+
+        return $errors;
+    }
+
+    protected function _processMetafieldType($metadata)
+    {
+        if (!array_key_exists('type', $metadata)) {
+            return ["Not specified metakey 'type'."];
+        }
+
+        $type = $metadata['type'];
+        if ($type !== 'object') {
+            if (!is_string($type)) {
+                return ["Expected value of 'type' to be a string, but " . gettype($type) . " value given.'"];
+            } else  {
+                return ["Expected value of 'type' to be 'object', but '$type' given.'"];
+            }
+        }
+
+        return [];
+    }
+
+    protected function _processMetafieldFields($metadata)
+    {
+        if (!array_key_exists('fields', $metadata)) {
+            return ["Not specified metakey 'fields'."];
+        }
+
+        $fieldsSpec = $metadata['fields'];
+        if (!is_array($fieldsSpec)) {
+            return ["Expected value of 'fields' to be an array, but " . gettype($fieldsSpec) . " value given.'"];
+        }
+
+        $this->_fieldsMetadata = $fieldsSpec;
+
+        return $this->_validateMetadata($fieldsSpec);
+    }
+
+    protected function _processMetafieldExtensible($metadata)
+    {
+        if (!array_key_exists('extensible', $metadata)) {
+            $isExtensible = false;
+        } else {
+            $isExtensible = $metadata['extensible'];
+            if (!is_bool($isExtensible)) {
+                return ["Expected value of 'extensible' to be a boolean, but " . gettype($isExtensible) . " value given.'"];
+            }
+        }
+
+        $this->_isExtensible = $isExtensible;
+
+        return [];
     }
 
     public function isExtensible()
@@ -35,10 +97,11 @@ class ObjectSpec implements Spec
 
     public function validate($value)
     {
-        $specFields   = $this->getFields();
-        $isExtensible = $this->isExtensible();
-
-        return $this->_validateObjectData($specFields, $isExtensible, $value);
+        return $this->_validateObjectData(
+            $this->_fieldsMetadata,
+            $this->isExtensible(),
+            $value
+        );
     }
 
     protected function _validateMetadata($metadata)
@@ -125,7 +188,7 @@ class ObjectSpec implements Spec
 
     protected function _isNativeSpec($fieldType)
     {
-        return in_array($fieldType, ['string', 'boolean']);
+        return in_array($fieldType, AbstractNativeType::getNativeTypeNames());
     }
 
     protected function _createArraySpec(array $fieldMetadata)
@@ -205,8 +268,7 @@ class ObjectSpec implements Spec
             throw new SpecException('Invalid object spec.', $errors);
         }
 
-        $objectFields = $fieldMetadata['fields'];
-        $fieldSpec = new ObjectSpec($objectFields, $isExtensible);
+        $fieldSpec = new ObjectSpec($fieldMetadata);
 
         return $fieldSpec;
     }

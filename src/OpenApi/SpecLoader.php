@@ -90,14 +90,30 @@ class SpecLoader
             'servers'      => ['type'  => 'array',
                                'items' => []
             ],
-//            'paths'        => ['type' => 'object'],
-//            'components'   => ['type' => 'object'],
-//            'security'     => ['type' => 'array'],
-//            'tags'         => ['type' => 'array'],
-//            'externalDocs' => ['type' => 'object'],
+            'paths'        => ['type' => 'object',
+                               'fields' => [],
+                               'extensible' => true
+            ],
+            'components'   => ['type' => 'object',
+                               'fields' => [],
+                               'extensible' => true
+            ],
+            'security'     => ['type' => 'array'],
+            'tags'         => ['type' => 'array',
+                               'items' => []
+            ],
+            'externalDocs' => ['type' => 'object',
+                               'fields' => [],
+                               'extensible' => true
+            ],
         ];
 
-        $openApiSpec = $entityFactory->createSpec(static::OPENAPI_SPEC_NAME, $metaSpecOpenApi, false);
+        $meta = [
+            'type'       => 'object',
+            'fields'     => $metaSpecOpenApi,
+            'extensible' => false
+        ];
+        $openApiSpec = $entityFactory->createSpec(static::OPENAPI_SPEC_NAME, $meta);
 
         return $openApiSpec;
     }

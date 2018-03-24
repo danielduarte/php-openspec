@@ -5,6 +5,7 @@ namespace GenericEntity;
 use GenericEntity\Spec\Native\StringSpec;
 use GenericEntity\Spec\Native\BooleanSpec;
 use GenericEntity\Spec\ObjectSpec;
+use GenericEntity\Spec\Native\AbstractNativeType;
 
 
 class Factory
@@ -14,13 +15,14 @@ class Factory
     public function __construct()
     {
         // Add native specs
-        $this->addSpec('string',  new StringSpec());
-        $this->addSpec('boolean', new BooleanSpec());
+        $this->addSpec(AbstractNativeType::NATIVE_TYPE_STRING,  new StringSpec());
+        $this->addSpec(AbstractNativeType::NATIVE_TYPE_BOOLEAN, new BooleanSpec());
     }
 
-    public function createSpec(string $name, array $specMetadata, bool $isExtensible)
+    // @todo change the name of the $meta param
+    public function createSpec(string $name, $specMetadata)
     {
-        $spec = new ObjectSpec($specMetadata, $isExtensible);
+        $spec = new ObjectSpec($specMetadata);
 
         $this->addSpec($name, $spec);
 

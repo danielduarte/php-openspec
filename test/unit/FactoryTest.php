@@ -13,14 +13,20 @@ final class FactoryTest extends TestCase
         $this->assertTrue($factory1 === $factory2);
     }
 
-    public function testCannotAddMultipleSpecs(): void
+    public function testCannotAddDuplicatedSpecs(): void
     {
         $this->expectException(\GenericEntity\DuplicatedSpecException::class);
 
         $factory = \GenericEntity\FactorySingleton::getInstance();
 
-        $factory->createSpec('duplicated', [], true);
-        $factory->createSpec('duplicated', [], true);
+        $testSpec = [
+            'type'       => 'object',
+            'fields'     => [],
+            'extensible' => true
+        ];
+
+        $factory->createSpec('duplicated', $testSpec);
+        $factory->createSpec('duplicated', $testSpec);
     }
 
     public function testHasAllNativeTypesDefined(): void

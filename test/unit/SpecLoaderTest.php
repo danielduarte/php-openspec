@@ -15,10 +15,12 @@ final class SpecLoaderTest extends TestCase
         }
 
         $errorCount = count($errors);
-        $this->assertTrue($errorCount === 0, "Could not load OpenApi metaspec. $errorCount error(s) found.");
+        $this->assertTrue($errorCount === 0, "Could not load OpenApi metaspec. $errorCount error(s) found." . PHP_EOL .
+            '- ' . implode(PHP_EOL . '- ', $errors)
+        );
     }
 
-    public function testLoadSpec(): void
+    public function testLoadUserSpecs(): void
     {
         $loader = new \OpenApi\SpecLoader();
 
@@ -38,8 +40,8 @@ final class SpecLoaderTest extends TestCase
 
             $errorCount = count($errors);
             $this->assertTrue($errorCount === 0, "Could not load OpenApi user spec in file '$filepath'. $errorCount error(s) found." . PHP_EOL .
-            '- ' . implode(PHP_EOL . '- ', $errors)
-        );
+                '- ' . implode(PHP_EOL . '- ', $errors)
+            );
         }
     }
 }
