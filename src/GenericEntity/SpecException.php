@@ -2,8 +2,8 @@
 
 namespace GenericEntity;
 
-
 use Throwable;
+
 
 class SpecException extends \RuntimeException
 {

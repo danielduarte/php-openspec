@@ -19,7 +19,7 @@ class ObjectSpec implements Spec
 
         $errors = $this->_validateMetadata($metadata);
         if (count($errors) > 0) {
-            throw new \GenericEntity\SpecException('Not valid specification.', $errors);
+            throw new SpecException('Not valid specification.', $errors);
         }
     }
 
@@ -35,91 +35,52 @@ class ObjectSpec implements Spec
 
     public function validate($value)
     {
-        $errors = [];
-
-        if (!is_array($value)) {
-            $errors[] = "Invalid object value.";
-            return $errors;
-        }
-
         $specFields   = $this->getFields();
         $isExtensible = $this->isExtensible();
 
-        foreach ($specFields as $fieldKey => $fieldMetadata) {
-            $hasField = array_key_exists($fieldKey, $value);
-            if ($hasField) {
-                $fieldValue = $value[$fieldKey];
-                $fieldType  = $fieldMetadata['type'];
-
-                // Get field spec
-                if ($this->_isNativeSpec($fieldType)) {
-                    // @todo control that there are no more fields in $fieldMetadata
-                    $fieldSpec = FactorySingleton::getInstance()->getSpec($fieldType);
-                } elseif ($fieldType === 'array') {
-                    $fieldSpec = $this->_createArraySpec($fieldMetadata);
-                } elseif ($fieldType === 'object') {
-                    $fieldSpec = $this->_createObjectSpec($fieldMetadata);
-                }
-
-                $fieldErrors = $fieldSpec->validate($fieldValue);
-                $errors = array_merge($errors, $fieldErrors);
-            }
-        }
-
-        if (!$isExtensible) {
-            $invalidFields = array_keys(array_diff_key($value, $specFields));
-            if (count($invalidFields) > 0) {
-                // Generate error message
-                $invalidFieldsStr = '\'' . implode('\', \'', $invalidFields) . '\'';
-                $validFieldsStr = '\'' . implode('\', \'', array_keys($specFields)) . '\'';
-                if (count($invalidFields) === 1) {
-                    $error = "Invalid field $invalidFieldsStr";
-                } else {
-                    $error = "Invalid fields $invalidFieldsStr";
-                }
-                $error .= " (valid fields are $validFieldsStr).";
-
-                $errors[] = $error;
-            }
-        }
-
-        return $errors;
+        return $this->_validateObjectData($specFields, $isExtensible, $value);
     }
 
     protected function _validateMetadata($metadata)
     {
         $errors = [];
 
+        // Fixed specification for field specs
+        $metaSpecFields = [
+            'type'       => ['type' => 'string'],
+            'fields'     => ['type' => 'object', 'fields' => [], 'extensible' => true],
+            'extensible' => ['type' => 'boolean'],
+            'items'      => ['type' => 'object', 'fields' => [], 'extensible' => true],
+        ];
+        $isExtensible = false;
+        // End: Fixed specification for field specs
+
         foreach ($metadata as $fieldKey => $fieldMetadata) {
             if (!is_string($fieldKey)) {
                 $errors[] = "Invalid field key '$fieldKey', field keys must be a string.";
             }
 
-            if (!is_array($fieldMetadata)) {
-                $errors[] = "Invalid field spec for '$fieldKey', field spec must be an array.";
-            } else {
-                $errors = array_merge($errors, $this->_validateFieldMetadata($fieldMetadata));
-            }
+            $fieldErrors = $this->_validateObjectData($metaSpecFields, $isExtensible, $fieldMetadata);
+            $errors = array_merge($errors, $fieldErrors);
         }
 
         return $errors;
     }
 
-    protected function _validateFieldMetadata(array $metadata)
+    protected function _validateObjectData($specFields, $isExtensible, $fieldValues)
     {
-        $metaspecFields = [
-            'type'       => ['type' => 'string'],
-            'fields'     => ['type' => 'object', 'fields' => [], 'extensible' => true],
-            'extensible' => ['type' => 'boolean'],
-        ];
-        $isExtensible = false;
-
         $errors = [];
-        foreach ($metaspecFields as $fieldKey => $fieldMetadata) {
-            $hasField = array_key_exists($fieldKey, $metadata);
+
+        if (!is_array($fieldValues)) {
+            $errors[] = "Invalid field values, array expected";
+            return $errors;
+        }
+
+        foreach ($specFields as $fieldKey => $fieldMetadata) {
+            $hasField = array_key_exists($fieldKey, $fieldValues);
             if ($hasField) {
-                $fieldValue = $metadata[$fieldKey];
-                $fieldType  = $fieldMetadata['type'];
+                $fieldValue = $fieldValues[$fieldKey];
+                $fieldType  = array_key_exists('type', $fieldMetadata) ? $fieldMetadata['type'] : null;
 
                 // Get field spec
                 $fieldSpec = null;
@@ -133,7 +94,7 @@ class ObjectSpec implements Spec
                 }
 
                 if ($fieldSpec === null) {
-                    $fieldErrors = ["Invalid field type '$fieldType'."];
+                    $fieldErrors = [$this->__errInvalidFieldType($fieldType)];
                 } else {
                     $fieldErrors = $fieldSpec->validate($fieldValue);
                 }
@@ -143,11 +104,11 @@ class ObjectSpec implements Spec
         }
 
         if (!$isExtensible) {
-            $invalidFields = array_keys(array_diff_key($metadata, $metaspecFields));
+            $invalidFields = array_keys(array_diff_key($fieldValues, $specFields));
             if (count($invalidFields) > 0) {
                 // Generate error message
                 $invalidFieldsStr = '\'' . implode('\', \'', $invalidFields) . '\'';
-                $validFieldsStr = '\'' . implode('\', \'', array_keys($metaspecFields)) . '\'';
+                $validFieldsStr = '\'' . implode('\', \'', array_keys($specFields)) . '\'';
                 if (count($invalidFields) === 1) {
                     $error = "Invalid field $invalidFieldsStr";
                 } else {
@@ -169,16 +130,36 @@ class ObjectSpec implements Spec
 
     protected function _createArraySpec(array $fieldMetadata)
     {
-        $metakeys = array_keys($fieldMetadata);
-        $expectedMetakeys = ['type', 'items'];
+        $errors = [];
 
-        if (sort($metakeys) !== sort($expectedMetakeys)) {
-            $expectedMetakeysStr = '\'' . implode('\', \'', $expectedMetakeys) . '\'';
-            throw new SpecException("Invalid array spec. Expected $expectedMetakeysStr.");
+        // Array specs metadata
+        $requiredMetakeys = ['type', 'items'];
+        $optionalMetakeys = [];
+        $allValidMetakeys = array_merge($requiredMetakeys, $optionalMetakeys);
+
+        $givenMetakeys = array_keys($fieldMetadata);
+
+        // Check for required fields that are not present
+        $missingRequiredMetakeys = array_diff($requiredMetakeys, $givenMetakeys);
+        if (count($missingRequiredMetakeys) > 0) {
+            $missingRequiredMetakeysStr = '\'' . implode('\', \'', $missingRequiredMetakeys) . '\'';
+            $errors[] = "Invalid array spec. Missing required metakeys $missingRequiredMetakeysStr.";
         }
 
-        $items = $fieldMetadata['items'];
-        $fieldSpec = new ArraySpec($items);
+        // Check for unexpected fields
+        $unexpectedMetakeys = array_diff($givenMetakeys, $allValidMetakeys);
+        if (count($unexpectedMetakeys) > 0) {
+            $unexpectedMetakeysStr = '\'' . implode('\', \'', $unexpectedMetakeys) . '\'';
+            $errors[] = "Invalid array spec. Unexpected metakeys $unexpectedMetakeysStr.";
+        }
+
+        // Check if there were errors
+        if (count($errors) > 0) {
+            throw new SpecException('Invalid array spec.', $errors);
+        }
+
+        $itemsFields = $fieldMetadata['items'];
+        $fieldSpec = new ArraySpec($itemsFields);
 
         return $fieldSpec;
     }
@@ -201,14 +182,14 @@ class ObjectSpec implements Spec
             $errors[] = "Invalid object spec. Missing required metakeys $missingRequiredMetakeysStr.";
         }
 
-        // Check for unexpected fields, if the object is not extensible
+        // Check for unexpected fields
         $unexpectedMetakeys = array_diff($givenMetakeys, $allValidMetakeys);
         if (count($unexpectedMetakeys) > 0) {
             $unexpectedMetakeysStr = '\'' . implode('\', \'', $unexpectedMetakeys) . '\'';
             $errors[] = "Invalid object spec. Unexpected metakeys $unexpectedMetakeysStr.";
         }
 
-        // Calculates extensibility of objecy spec
+        // Calculates extensibility of object spec
         if (array_key_exists('extensible', $fieldMetadata)) {
             $isExtensible = $fieldMetadata['extensible'];
             if (!is_bool($isExtensible)) {
@@ -228,5 +209,16 @@ class ObjectSpec implements Spec
         $fieldSpec = new ObjectSpec($objectFields, $isExtensible);
 
         return $fieldSpec;
+    }
+
+    protected function __errInvalidFieldType($fieldType)
+    {
+        if (is_null($fieldType)) {
+            return "Field type cannot be null.";
+        } elseif ($fieldType === '') {
+            return "Field type cannot be empty.";
+        }
+
+        return "Invalid field type '$fieldType'.";
     }
 }

@@ -57,15 +57,28 @@ class SpecLoader
             'openapi'      => ['type' => 'string'],
             'info'         => ['type' => 'object',
                                'fields' => [
-                                   'title' => ['type' => 'string'],
-                                   'description' => [],
-                                   'termsOfService' => [],
-                                   'contact' => [],
-                                   'license' => [],
-                                   'version' => []
+                                   'title'          => ['type' => 'string'],
+                                   'description'    => ['type' => 'string'],
+                                   'termsOfService' => ['type' => 'string'],
+                                   'contact'        => ['type' => 'object',
+                                                 'fields' => [
+                                                     'name'  => ['type' => 'string'],
+                                                     'url'   => ['type' => 'string'],
+                                                     'email' => ['type' => 'string'],
+                                                 ]
+                                   ],
+                                   'license'        => ['type' => 'object',
+                                                 'fields' => [
+                                                     'name'  => ['type' => 'string'],
+                                                     'url'   => ['type' => 'string'],
+                                                 ]
+                                   ],
+                                   'version'        => ['type' => 'string']
                                ],
-                              ],
-//            'servers'      => ['type' => 'array'],
+            ],
+            'servers'      => ['type'  => 'array',
+                               'items' => []
+            ],
 //            'paths'        => ['type' => 'object'],
 //            'components'   => ['type' => 'object'],
 //            'security'     => ['type' => 'array'],
