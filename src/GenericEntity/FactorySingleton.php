@@ -11,7 +11,7 @@ class FactorySingleton
     {
     }
 
-    public static function getInstance()
+    public static function getInstance(): \GenericEntity\Factory
     {
         if (static::$_instance === null) {
             static::$_instance = new Factory();

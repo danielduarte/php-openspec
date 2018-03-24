@@ -18,7 +18,7 @@ class Factory
         $this->addSpec('boolean', new BooleanSpec());
     }
 
-    public function createSpec($name, $specMetadata, $isExtensible)
+    public function createSpec(string $name, array $specMetadata, bool $isExtensible)
     {
         $spec = new ObjectSpec($specMetadata, $isExtensible);
 
@@ -30,7 +30,7 @@ class Factory
     public function addSpec($name, $spec)
     {
         if (array_key_exists($name, $this->_specs)) {
-            throw new \RuntimeException("Spec '$name' already defined.");
+            throw new \GenericEntity\DuplicatedSpecException("Spec '$name' already defined.");
         }
 
         $this->_specs[$name] = $spec;
@@ -38,9 +38,14 @@ class Factory
         return $this;
     }
 
+    public function hasSpec($name)
+    {
+        return array_key_exists($name, $this->_specs);
+    }
+
     public function getSpec($name)
     {
-        if (!array_key_exists($name, $this->_specs)) {
+        if (!$this->hasSpec($name)) {
             throw new \RuntimeException("Spec '$name' does not exist.");
         }
 

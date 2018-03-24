@@ -53,6 +53,17 @@ class SpecLoader
     {
         $entityFactory = FactorySingleton::getInstance();
 
+        if (!$entityFactory->hasSpec(static::OPENAPI_SPEC_NAME)) {
+            $this->_createOpenApiSpec(static::OPENAPI_SPEC_NAME);
+        }
+
+        return $entityFactory->getSpec(static::OPENAPI_SPEC_NAME);
+    }
+
+    protected function _createOpenApiSpec()
+    {
+        $entityFactory = FactorySingleton::getInstance();
+
         $metaSpecOpenApi = [
             'openapi'      => ['type' => 'string'],
             'info'         => ['type' => 'object',

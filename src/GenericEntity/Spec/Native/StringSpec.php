@@ -5,7 +5,7 @@ namespace GenericEntity\Spec\Native;
 use GenericEntity\Spec\Spec;
 
 
-class StringSpec implements Spec
+class StringSpec extends AbstractNativeType
 {
     public function validate($value)
     {

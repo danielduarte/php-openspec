@@ -9,6 +9,7 @@
     "symfony/yaml": "^4.0"
   },
   "require-dev": {
-    "behat/behat": "^3.4"
+    "behat/behat": "^3.4",
+    "phpunit/phpunit": "^7"
   }
 }
