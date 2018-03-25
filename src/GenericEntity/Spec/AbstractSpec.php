@@ -2,6 +2,8 @@
 
 namespace GenericEntity\Spec;
 
+use GenericEntity\SpecException;
+
 
 abstract class AbstractSpec implements Spec
 {
@@ -40,14 +42,14 @@ abstract class AbstractSpec implements Spec
         $missingRequiredMetakeys = array_diff($requiredMetakeys, $givenMetakeys);
         if (count($missingRequiredMetakeys) > 0) {
             $missingRequiredMetakeysStr = '\'' . implode('\', \'', $missingRequiredMetakeys) . '\'';
-            $errors[] = "Invalid object spec. Missing required metakeys $missingRequiredMetakeysStr.";
+            $errors[] = "Invalid spec. Missing required metakeys $missingRequiredMetakeysStr.";
         }
 
         // Check for unexpected fields
         $unexpectedMetakeys = array_diff($givenMetakeys, $allValidMetakeys);
         if (count($unexpectedMetakeys) > 0) {
             $unexpectedMetakeysStr = '\'' . implode('\', \'', $unexpectedMetakeys) . '\'';
-            $errors[] = "Invalid object spec. Unexpected metakeys $unexpectedMetakeysStr.";
+            $errors[] = "Invalid spec. Unexpected metakeys $unexpectedMetakeysStr.";
         }
 
 

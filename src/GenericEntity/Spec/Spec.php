@@ -5,5 +5,5 @@ namespace GenericEntity\Spec;
 
 interface Spec
 {
-    public function validate($value);
+    public function validate($value): array;
 }

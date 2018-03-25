@@ -4,7 +4,6 @@ namespace GenericEntity\Spec;
 
 use GenericEntity\FactorySingleton;
 use GenericEntity\Spec\Native\AbstractNativeType;
-use GenericEntity\SpecException;
 
 
 class ObjectSpec extends AbstractSpec
@@ -90,20 +89,6 @@ class ObjectSpec extends AbstractSpec
         return [];
     }
 
-    public function isExtensible()
-    {
-        return $this->_isExtensible;
-    }
-
-    public function validate($value)
-    {
-        return $this->_validateObjectData(
-            $this->_fieldsMetadata,
-            $this->isExtensible(),
-            $value
-        );
-    }
-
     protected function _validateMetadata($metadata)
     {
         $errors = [];
@@ -151,9 +136,9 @@ class ObjectSpec extends AbstractSpec
                     // @todo control that there are no more fields in $fieldMetadata
                     $fieldSpec = FactorySingleton::getInstance()->getSpec($fieldType);
                 } elseif ($fieldType === 'array') {
-                    $fieldSpec = $this->_createArraySpec($fieldMetadata);
+                    $fieldSpec = new ArraySpec($fieldMetadata);
                 } elseif ($fieldType === 'object') {
-                    $fieldSpec = $this->_createObjectSpec($fieldMetadata);
+                    $fieldSpec = new ObjectSpec($fieldMetadata);
                 }
 
                 if ($fieldSpec === null) {
@@ -191,96 +176,28 @@ class ObjectSpec extends AbstractSpec
         return in_array($fieldType, AbstractNativeType::getNativeTypeNames());
     }
 
-    protected function _createArraySpec(array $fieldMetadata)
-    {
-        $errors = [];
-
-        // Array specs metadata
-        $requiredMetakeys = ['type', 'items'];
-        $optionalMetakeys = [];
-        $allValidMetakeys = array_merge($requiredMetakeys, $optionalMetakeys);
-
-        $givenMetakeys = array_keys($fieldMetadata);
-
-        // Check for required fields that are not present
-        $missingRequiredMetakeys = array_diff($requiredMetakeys, $givenMetakeys);
-        if (count($missingRequiredMetakeys) > 0) {
-            $missingRequiredMetakeysStr = '\'' . implode('\', \'', $missingRequiredMetakeys) . '\'';
-            $errors[] = "Invalid array spec. Missing required metakeys $missingRequiredMetakeysStr.";
-        }
-
-        // Check for unexpected fields
-        $unexpectedMetakeys = array_diff($givenMetakeys, $allValidMetakeys);
-        if (count($unexpectedMetakeys) > 0) {
-            $unexpectedMetakeysStr = '\'' . implode('\', \'', $unexpectedMetakeys) . '\'';
-            $errors[] = "Invalid array spec. Unexpected metakeys $unexpectedMetakeysStr.";
-        }
-
-        // Check if there were errors
-        if (count($errors) > 0) {
-            throw new SpecException('Invalid array spec.', $errors);
-        }
-
-        $itemsFields = $fieldMetadata['items'];
-        $fieldSpec = new ArraySpec($itemsFields);
-
-        return $fieldSpec;
-    }
-
-    protected function _createObjectSpec(array $fieldMetadata)
-    {
-        $errors = [];
-
-        // Object specs metadata
-        $requiredMetakeys = ['type', 'fields'];
-        $optionalMetakeys = ['extensible'];
-        $allValidMetakeys = array_merge($requiredMetakeys, $optionalMetakeys);
-
-        $givenMetakeys = array_keys($fieldMetadata);
-
-        // Check for required fields that are not present
-        $missingRequiredMetakeys = array_diff($requiredMetakeys, $givenMetakeys);
-        if (count($missingRequiredMetakeys) > 0) {
-            $missingRequiredMetakeysStr = '\'' . implode('\', \'', $missingRequiredMetakeys) . '\'';
-            $errors[] = "Invalid object spec. Missing required metakeys $missingRequiredMetakeysStr.";
-        }
-
-        // Check for unexpected fields
-        $unexpectedMetakeys = array_diff($givenMetakeys, $allValidMetakeys);
-        if (count($unexpectedMetakeys) > 0) {
-            $unexpectedMetakeysStr = '\'' . implode('\', \'', $unexpectedMetakeys) . '\'';
-            $errors[] = "Invalid object spec. Unexpected metakeys $unexpectedMetakeysStr.";
-        }
-
-        // Calculates extensibility of object spec
-        if (array_key_exists('extensible', $fieldMetadata)) {
-            $isExtensible = $fieldMetadata['extensible'];
-            if (!is_bool($isExtensible)) {
-                $errors[] = "Invalid value for 'extensible'. It must be a boolean.";
-                $isExtensible = false;  // If incorrect value, defaults to false
-            }
-        } else {
-            $isExtensible = false; // If absent, defaults to false
-        }
-
-        // Check if there were errors
-        if (count($errors) > 0) {
-            throw new SpecException('Invalid object spec.', $errors);
-        }
-
-        $fieldSpec = new ObjectSpec($fieldMetadata);
-
-        return $fieldSpec;
-    }
-
     protected function __errInvalidFieldType($fieldType)
     {
         if (is_null($fieldType)) {
-            return "Field type cannot be null.";
+            return "Not specified field type.";
         } elseif ($fieldType === '') {
             return "Field type cannot be empty.";
         }
 
         return "Invalid field type '$fieldType'.";
+    }
+
+    public function isExtensible()
+    {
+        return $this->_isExtensible;
+    }
+
+    public function validate($value): array
+    {
+        return $this->_validateObjectData(
+            $this->_fieldsMetadata,
+            $this->isExtensible(),
+            $value
+        );
     }
 }

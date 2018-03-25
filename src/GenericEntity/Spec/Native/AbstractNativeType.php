@@ -18,4 +18,21 @@ abstract class AbstractNativeType implements Spec
             self::NATIVE_TYPE_BOOLEAN
         ];
     }
+
+    public function validate($value): array
+    {
+        $valid = $this->_isValidValue($value);
+
+        $basicTypeNameExpected = $this->_getBasicTypeName(); 
+
+        if (!$valid) {
+            return ["Expected $basicTypeNameExpected value, " . gettype($value) . " given."];
+        } else {
+            return [];
+        }
+    }
+
+    protected abstract function _isValidValue($value);
+
+    protected abstract function _getBasicTypeName();
 }

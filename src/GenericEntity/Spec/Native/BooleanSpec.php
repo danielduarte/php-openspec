@@ -2,19 +2,16 @@
 
 namespace GenericEntity\Spec\Native;
 
-use GenericEntity\Spec\Spec;
-
 
 class BooleanSpec extends AbstractNativeType
 {
-    public function validate($value)
+    protected function _isValidValue($value)
     {
-        $valid = is_bool($value);
+        return is_bool($value);
+    }
 
-        if (!$valid) {
-            return ['Expected boolean value.'];
-        } else {
-            return [];
-        }
+    protected function _getBasicTypeName()
+    {
+        return 'boolean';
     }
 }
