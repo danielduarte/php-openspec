@@ -15,6 +15,7 @@ class FactorySingleton
     {
         if (static::$_instance === null) {
             static::$_instance = new Factory();
+            static::$_instance->_addMetaTypesSpecs();
         }
 
         return static::$_instance;

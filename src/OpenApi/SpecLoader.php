@@ -18,13 +18,13 @@ class SpecLoader
         $this->_openApiSpec = $this->_loadOpenApiSpec();
     }
 
-    public function load($specFile)
+    public function loadFromFile($specFileYaml)
     {
         $errors = [];
 
-        $userSpec = Yaml::parseFile($specFile);
+        $userSpec = Yaml::parseFile($specFileYaml);
         if ($userSpec === null) {
-            $errors[] = "Not valid Yaml format in file '$specFile'.";
+            $errors[] = "Not valid Yaml format in file '$specFileYaml'.";
         } else {
 
             try {
@@ -36,7 +36,55 @@ class SpecLoader
         }
 
         if (count($errors) > 0) {
-            throw new SpecException("Invalid spec in file '$specFile'.", $errors);
+            throw new SpecException("Invalid spec in file '$specFileYaml'.", $errors);
+        }
+
+        return $openapiUserSpec;
+    }
+
+    public function loadFromString($specStringYaml)
+    {
+        $errors = [];
+
+        $userSpec = Yaml::parse($specStringYaml);
+        if ($userSpec === null) {
+            $errors[] = "Not valid Yaml format in given string.";
+        } else {
+
+            try {
+                $openapiUserSpec = $this->_parse($userSpec);
+            } catch (\GenericEntity\SpecException $ex) {
+                $errors = $ex->getErrors();
+                $openapiUserSpec = null;
+            }
+        }
+
+        if (count($errors) > 0) {
+            throw new SpecException("Invalid spec in given string.", $errors);
+        }
+
+        return $openapiUserSpec;
+    }
+
+    public function loadFromArray($specArray)
+    {
+        $errors = [];
+
+        $userSpec = is_array($specArray) ? $specArray : null;
+        if ($userSpec === null) {
+            $errors[] = "Not valid array given.";
+        } else {
+
+            try {
+                $openapiUserSpec = $this->_parse($userSpec);
+            } catch (\GenericEntity\SpecException $ex) {
+                $errors = $ex->getErrors();
+                $openapiUserSpec = null;
+            }
+        }
+
+        if (count($errors) > 0) {
+            throw new SpecException("Invalid spec in given array.", $errors);
         }
 
         return $openapiUserSpec;

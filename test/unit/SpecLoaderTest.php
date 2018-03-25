@@ -33,7 +33,7 @@ final class SpecLoaderTest extends TestCase
 
             $errors = [];
             try {
-                $apiSpec = $loader->load($filepath);
+                $apiSpec = $loader->loadFromFile($filepath);
             } catch (\GenericEntity\SpecException $ex) {
                 $errors = $ex->getErrors();
             }

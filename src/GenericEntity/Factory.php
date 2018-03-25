@@ -10,13 +10,35 @@ use GenericEntity\Spec\Native\AbstractNativeType;
 
 class Factory
 {
+    const META_SPEC_OBJECT_FIELD = 'MetaSpecObjectField';
+
     protected $_specs = [];
 
     public function __construct()
     {
-        // Add native specs
+        $this->_addNativeTypesSpecs();
+        //$this->_addMetaTypesSpecs();
+    }
+
+    protected function _addNativeTypesSpecs()
+    {
         $this->addSpec(AbstractNativeType::NATIVE_TYPE_STRING,  new StringSpec());
         $this->addSpec(AbstractNativeType::NATIVE_TYPE_BOOLEAN, new BooleanSpec());
+    }
+
+    public function _addMetaTypesSpecs()
+    {
+        // Meta Object Field specification
+        $this->createSpec(static::META_SPEC_OBJECT_FIELD, [
+            'type'       => 'object',
+            'extensible' => false,
+            'fields'     => [
+                'type'       => ['type' => 'string'],
+                'fields'     => ['type' => 'object', 'fields' => [], 'extensible' => true],
+                'extensible' => ['type' => 'boolean'],
+                'items'      => ['type' => 'object', 'fields' => [], 'extensible' => true],
+            ],
+        ]);
     }
 
     // @todo change the name of the $meta param

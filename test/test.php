@@ -19,7 +19,7 @@ foreach ($specFiles as $filepath) {
     echo "- Analizing spec in file $filepath". PHP_EOL;
     try {
         $apiSpec = $loader
-            ->load($filepath);
+            ->loadFromFile($filepath);
 
         echo 'Ok' . PHP_EOL;
     } catch (\GenericEntity\SpecException $ex) {
