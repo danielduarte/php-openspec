@@ -137,8 +137,11 @@ class SpecLoader
             ],
             'servers'      => ['type'  => 'array',
                                'items' => [
-                                   'description' => ['type' => 'string'],
-                                   'url'         => ['type' => 'string'],
+                                   'type' => 'object',
+                                   'fields' => [
+                                       'description' => ['type' => 'string'],
+                                       'url'         => ['type' => 'string'],
+                                   ]
                                ]
             ],
             'paths'        => ['type' => 'object',
@@ -152,14 +155,18 @@ class SpecLoader
             'security'     => ['type' => 'array'],
             'tags'         => ['type' => 'array',
                                'items' => [
-                                   'name'         => ['type' => 'string'],
-                                   'description'  => ['type' => 'string'],
-                                   'externalDocs' => ['type' => 'object',
-                                                      'fields' => [
-                                                          'description'  => ['type' => 'string'],
-                                                          'url'          => ['type' => 'string'],
-                                                      ]
-                                   ],
+                                   'type' => 'object',
+                                   'extensible' => false,
+                                   'fields' => [
+                                           'name'         => ['type' => 'string'],
+                                           'description'  => ['type' => 'string'],
+                                           'externalDocs' => ['type' => 'object',
+                                                              'fields' => [
+                                                                  'description'  => ['type' => 'string'],
+                                                                  'url'          => ['type' => 'string'],
+                                                              ]
+                                           ],
+                                   ]
                                ]
             ],
             'externalDocs' => ['type' => 'object',

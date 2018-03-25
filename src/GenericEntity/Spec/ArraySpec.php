@@ -46,7 +46,10 @@ class ArraySpec extends AbstractSpec
 
         $this->_itemsMetadata = $itemsSpec;
 
-        return $this->_validateFieldsMetadata($itemsSpec);
+        // Fixed specification for objects
+        $objectMetaSpec = $this->_getObjectSpecData();;
+        // End: Fixed specification for object specs
+        return $this->_validateObjectData($objectMetaSpec, $itemsSpec);
     }
 
     public function validate($value): array
@@ -64,13 +67,7 @@ class ArraySpec extends AbstractSpec
                 $errors[] = "Expected integer as array index, given string '$arrayIndex'.";
             }
 
-            $itemErrors = $this->_validateObjectData([
-                    'type'       => 'object',
-                    'fields'     => $this->_itemsMetadata,
-                    'extensible' => false,
-                ],
-                $arrayItem
-            );
+            $itemErrors = $this->_validateObjectData($this->_itemsMetadata, $arrayItem);
 
             $errors = array_merge($errors, $itemErrors);
         }

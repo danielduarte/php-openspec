@@ -63,12 +63,9 @@ abstract class AbstractSpec implements Spec
         return $errors;
     }
 
-    protected function _validateFieldsMetadata($fieldsSpec)
+    protected function _getObjectSpecData()
     {
-        $errors = [];
-
-        // Fixed specification for objects
-        $objectMetaSpec = [
+        return [
             'type'       => 'object',
             'extensible' => false,
             'fields'     => [
@@ -78,7 +75,13 @@ abstract class AbstractSpec implements Spec
                 'items'      => ['type' => 'object', 'fields' => [], 'extensible' => true],
             ],
         ];
-        // End: Fixed specification for object specs
+    }
+
+    protected function _validateFieldsMetadata($fieldsSpec)
+    {
+        $errors = [];
+
+        $objectMetaSpec = $this->_getObjectSpecData();
 
         foreach ($fieldsSpec as $fieldKey => $fieldMetadata) {
             if (!is_string($fieldKey)) {
@@ -103,7 +106,7 @@ abstract class AbstractSpec implements Spec
     protected function _validateObjectData($objectSpec, $objectInstance)
     {
         $specFields   = $objectSpec['fields'];
-        $isExtensible = $objectSpec['extensible'];
+        $isExtensible = array_key_exists('extensible', $objectSpec) ? $objectSpec['extensible'] : false;
 
         $errors = [];
 
