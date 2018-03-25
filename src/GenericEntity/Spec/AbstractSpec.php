@@ -158,6 +158,8 @@ abstract class AbstractSpec implements Spec
 
                 $errors[] = $error;
             }
+        } else {
+            // @todo check that extension fields are valid
         }
 
         return $errors;

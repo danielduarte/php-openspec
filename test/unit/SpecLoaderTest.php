@@ -24,7 +24,7 @@ final class SpecLoaderTest extends TestCase
     {
         $loader = new \OpenApi\SpecLoader();
 
-        $specFilesExpr = __DIR__ . '/cases/*.yml';
+        $specFilesExpr = __DIR__ . '/cases/openapi/*.yml';
         $specFiles = glob($specFilesExpr);
 
         $this->assertTrue(count($specFiles) > 0, "There are no file cases to test that match '$specFilesExpr'.");

@@ -1,0 +1,12 @@
+type: array
+items:
+  type: object
+  fields:
+    country:
+      type: string
+    region:
+      type: string
+    city:
+      type: string
+    street:
+      type: string

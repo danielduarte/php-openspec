@@ -23,9 +23,8 @@ abstract class AbstractNativeType implements Spec
     {
         $valid = $this->_isValidValue($value);
 
-        $basicTypeNameExpected = $this->_getBasicTypeName(); 
-
         if (!$valid) {
+            $basicTypeNameExpected = $this->_getBasicTypeName();
             return ["Expected $basicTypeNameExpected value, " . gettype($value) . " given."];
         } else {
             return [];

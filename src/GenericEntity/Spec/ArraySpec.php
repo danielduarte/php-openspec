@@ -67,7 +67,13 @@ class ArraySpec extends AbstractSpec
                 $errors[] = "Expected integer as array index, given string '$arrayIndex'.";
             }
 
-            $itemErrors = $this->_validateObjectData($this->_itemsMetadata, $arrayItem);
+            //if ($this->_itemsMetadata['type'] === 'object') {
+                $itemErrors = $this->_validateObjectData($this->_itemsMetadata, $arrayItem);
+            //} elseif ($this->_itemsMetadata['type'] === 'array') {
+            //    // @todo implement array of arrays
+            //} else {
+            //    // @todo implement the rest of the types
+            //}
 
             $errors = array_merge($errors, $itemErrors);
         }

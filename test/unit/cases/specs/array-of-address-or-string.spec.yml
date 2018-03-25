@@ -1,0 +1,13 @@
+type: array
+items:
+  type: mixed
+  options:
+
+  - type: string
+
+  - type: object
+    fields:
+      country: string
+      region: string
+      city: string
+      street: string

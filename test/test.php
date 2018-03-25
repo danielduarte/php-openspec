@@ -14,7 +14,7 @@ try {
 }
 echo PHP_EOL;
 
-$specFiles = glob(__DIR__ . '/unit/cases/*.yml');
+$specFiles = glob(__DIR__ . '/unit/cases/openapi/*.yml');
 foreach ($specFiles as $filepath) {
     echo "- Analizing spec in file $filepath". PHP_EOL;
     try {
