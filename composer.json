@@ -2,7 +2,8 @@
   "autoload": {
     "psr-4": {
       "OpenApi\\": "src/OpenApi",
-      "GenericEntity\\": "src/GenericEntity"
+      "GenericEntity\\": "src/GenericEntity",
+      "OpenSpec\\": "src/OpenSpec"
     }
   },
   "require": {
