@@ -3,7 +3,6 @@
 namespace OpenSpec;
 
 use OpenSpec\Spec\Spec;
-use OpenSpec\SpecLibraryException;
 
 
 class SpecLibrary

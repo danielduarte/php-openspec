@@ -1,6 +1,0 @@
-type: array
-items:
-  type: mixed
-  options:
-    - type: string
-    - type: boolean

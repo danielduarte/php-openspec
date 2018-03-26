@@ -1,16 +1,16 @@
 {
+  "name": "daniel-duarte/php-openspec",
+  "description": "OpenSpec PHP",
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/daniel-duarte/php-openspec/blob/master/README.md",
+
   "autoload": {
     "psr-4": {
-      "OpenApi\\": "src/OpenApi",
-      "GenericEntity\\": "src/GenericEntity",
       "OpenSpec\\": "src/OpenSpec"
     }
   },
-  "require": {
-    "symfony/yaml": "^4.0"
-  },
   "require-dev": {
-    "behat/behat": "^3.4",
     "phpunit/phpunit": "^7"
   }
 }

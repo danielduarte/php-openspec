@@ -15,6 +15,7 @@ class ParseSpecException extends \RuntimeException
     const CODE_INVALID_SPEC_DATA      = 6;
     const CODE_MISSING_REQUIRED_FIELD = 7;
     const CODE_UNEXPECTED_FIELDS      = 8;
+    const CODE_INVALID_TYPE_NAME      = 9;
 
     protected $_errors;
 
