@@ -42,30 +42,21 @@ class SpecBuilder
             throw new ParseSpecException("Expected 'type' of spec to be a string value.", ParseSpecException::CODE_INVALID_TYPE_NAME_TYPE);
         }
 
-        switch ($type) {
-            case 'string': {
-                return new StringSpec($specData);
-                break;
-            }
-            case 'boolean': {
-                return new BooleanSpec($specData);
-                break;
-            }
-            case 'object': {
-                return new ObjectSpec($specData);
-                break;
-            }
-            case 'array': {
-                return new ArraySpec($specData);
-                break;
-            }
-            case 'mixed': {
-                return new MixedSpec($specData);
-                break;
-            }
-            default: {
-                throw new ParseSpecException("Unknown spec type '$type'.", ParseSpecException::CODE_UNKNOWN_SPEC_TYPE);
-            }
+        $classMap = [
+            'string'  => '\OpenSpec\Spec\StringSpec',
+            'boolean' => '\OpenSpec\Spec\BooleanSpec',
+            'object'  => '\OpenSpec\Spec\ObjectSpec',
+            'array'   => '\OpenSpec\Spec\ArraySpec',
+            'mixed'   => '\OpenSpec\Spec\MixedSpec',
+            'null'    => '\OpenSpec\Spec\NullSpec',
+        ];
+
+        if (!array_key_exists($type, $classMap)) {
+            throw new ParseSpecException("Unknown spec type '$type'.", ParseSpecException::CODE_UNKNOWN_SPEC_TYPE);
         }
+
+        $specClassName = $classMap[$type];
+
+        return new $specClassName($specData);
     }
 }
