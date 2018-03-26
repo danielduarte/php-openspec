@@ -3,11 +3,6 @@
 namespace OpenSpec;
 
 use OpenSpec\Spec\Spec;
-use OpenSpec\Spec\StringSpec;
-use OpenSpec\Spec\BooleanSpec;
-use OpenSpec\Spec\ObjectSpec;
-use OpenSpec\Spec\ArraySpec;
-use OpenSpec\Spec\MixedSpec;
 
 
 class SpecBuilder
