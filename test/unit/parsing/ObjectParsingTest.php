@@ -50,7 +50,7 @@ final class ObjectParsingTest extends TestCase
 
         $fields = $spec->getOptionalFields();
         sort($fields);
-        $this->assertEquals($fields, ['extensible']);
+        $this->assertEquals($fields, ['extensible', 'extensionFields']);
     }
 
     public function testSpecAllFields()
@@ -126,5 +126,47 @@ final class ObjectParsingTest extends TestCase
         }
 
         $this->assertTrue($exception->containsError(ParseSpecException::CODE_INVALID_SPEC_DATA));
+    }
+
+    public function testFieldExtensionFieldsOfInvalidType()
+    {
+        $specData = ['type' => 'object', 'extensible' => true, 'extensionFields' => 'this is a string'];
+
+        $exception = null;
+        try {
+            SpecBuilder::getInstance()->build($specData);
+        } catch (ParseSpecException $ex) {
+            $exception = $ex;
+        }
+
+        $this->assertTrue($exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
+    }
+
+    public function testExtensionFieldsWithoutExtensible()
+    {
+        $specData = ['type' => 'object', 'extensionFields' => ['type' => 'string']];
+
+        $exception = null;
+        try {
+            SpecBuilder::getInstance()->build($specData);
+        } catch (ParseSpecException $ex) {
+            $exception = $ex;
+        }
+
+        $this->assertTrue($exception->containsError(ParseSpecException::CODE_EXTENSIBLE_EXPECTED));
+    }
+
+    public function testExtensionFieldsWithExtensibleFalse()
+    {
+        $specData = ['type' => 'object', 'extensible' => false, 'extensionFields' => ['type' => 'string']];
+
+        $exception = null;
+        try {
+            SpecBuilder::getInstance()->build($specData);
+        } catch (ParseSpecException $ex) {
+            $exception = $ex;
+        }
+
+        $this->assertTrue($exception->containsError(ParseSpecException::CODE_EXTENSIBLE_EXPECTED));
     }
 }

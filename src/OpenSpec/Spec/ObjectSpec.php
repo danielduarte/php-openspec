@@ -24,7 +24,7 @@ class ObjectSpec extends Spec
 
     public function getOptionalFields(): array
     {
-        return ['extensible'];
+        return ['extensible', 'extensionFields'];
     }
 
     protected function _validateFieldSpecData_fields($fieldValue): array
@@ -66,6 +66,15 @@ class ObjectSpec extends Spec
         }
 
         $this->_extensible = $fieldValue;
+
+        return $errors;
+    }
+
+    protected function _validateFieldSpecData_extensionFields($fieldValue): array
+    {
+        $errors = [];
+
+        // @todo implement logic
 
         return $errors;
     }
