@@ -33,6 +33,10 @@ class SpecBuilder
             throw new ParseSpecException('Expected array as spec data, but ' . gettype($specData) . ' given.', ParseSpecException::CODE_ARRAY_EXPECTED);
         }
 
+        if (!array_key_exists('type', $specData)) {
+            throw new ParseSpecException("Field 'type' not specified in spec data.", ParseSpecException::CODE_MISSING_REQUIRED_FIELD);
+        }
+
         $type = $specData['type'];
         if (!is_string($type)) {
             throw new ParseSpecException("Expected 'type' of spec to be a string value.", ParseSpecException::CODE_INVALID_TYPE_NAME_TYPE);

@@ -11,7 +11,10 @@ final class ArrayParsingTest extends TestCase
 {
     protected function getSpecInstance(): Spec
     {
-        $specData = ['type' => 'array', 'items' => 1];
+        $specData = [
+            'type'  => 'array',
+            'items' => ['type' => 'string']
+        ];
 
         $spec = SpecBuilder::getInstance()->build($specData);
 
@@ -82,9 +85,9 @@ final class ArrayParsingTest extends TestCase
     public function testUnexpectedFields()
     {
         $specData = [
-            'type' => 'array',
+            'type'                        => 'array',
             'this_is_an_unexpected_field' => 1234,
-            'and_this_is_other' => ['a', 'b']
+            'and_this_is_other'           => ['a', 'b']
         ];
 
         $exception = null;

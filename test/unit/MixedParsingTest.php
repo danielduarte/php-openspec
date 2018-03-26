@@ -11,7 +11,10 @@ final class MixedParsingTest extends TestCase
 {
     protected function getSpecInstance(): Spec
     {
-        $specData = ['type' => 'mixed', 'options' => 1];
+        $specData = [
+            'type' => 'mixed',
+            'options' => []
+        ];
         $spec = SpecBuilder::getInstance()->build($specData);
 
         return $spec;
@@ -81,9 +84,9 @@ final class MixedParsingTest extends TestCase
     public function testUnexpectedFields()
     {
         $specData = [
-            'type' => 'mixed',
+            'type'                        => 'mixed',
             'this_is_an_unexpected_field' => 1234,
-            'and_this_is_other' => ['a', 'b']
+            'and_this_is_other'           => ['a', 'b']
         ];
 
         $exception = null;

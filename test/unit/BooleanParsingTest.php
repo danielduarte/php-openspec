@@ -66,9 +66,9 @@ final class BooleanParsingTest extends TestCase
     public function testUnexpectedFields()
     {
         $specData = [
-            'type' => 'boolean',
+            'type'                        => 'boolean',
             'this_is_an_unexpected_field' => 1234,
-            'and_this_is_other' => ['a', 'b']
+            'and_this_is_other'           => ['a', 'b']
         ];
 
         $exception = null;

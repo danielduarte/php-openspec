@@ -11,7 +11,11 @@ final class ObjectParsingTest extends TestCase
 {
     protected function getSpecInstance(): Spec
     {
-        $specData = ['type' => 'object', 'fields' => 1];
+        $specData = [
+            'type'       => 'object',
+            'fields'     => [],
+            'extensible' => true
+        ];
         $spec = SpecBuilder::getInstance()->build($specData);
 
         return $spec;
@@ -81,9 +85,9 @@ final class ObjectParsingTest extends TestCase
     public function testUnexpectedFields()
     {
         $specData = [
-            'type' => 'object',
+            'type'                        => 'object',
             'this_is_an_unexpected_field' => 1234,
-            'and_this_is_other' => ['a', 'b']
+            'and_this_is_other'           => ['a', 'b']
         ];
 
         $exception = null;

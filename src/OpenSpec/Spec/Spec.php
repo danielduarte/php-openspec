@@ -57,6 +57,34 @@ abstract class Spec
             $errors[] = [ParseSpecException::CODE_UNEXPECTED_FIELDS, "Invalid spec data. Unexpected field(s) $unexpectedFieldsStr."];
         }
 
+        $validGivenFields = array_diff($givenFields, $unexpectedFields);
+        $fieldsErrors = $this->_validateFieldsSpecData($specData, $validGivenFields);
+        $errors = array_merge($errors, $fieldsErrors);
+
+        return $errors;
+    }
+
+    protected function _validateFieldsSpecData($specData, $fields)
+    {
+        $errors = [];
+
+        foreach ($fields as $field) {
+            $fieldValidationMethodName = '_validateFieldSpecData_' . $field;
+            $fieldErrors = $this->$fieldValidationMethodName($specData[$field]);
+            $errors = array_merge($errors, $fieldErrors);
+        }
+
+        return $errors;
+    }
+
+    protected function _validateFieldSpecData_type($fieldValue): array
+    {
+        $errors = [];
+        $expectedValue = $this->getTypeName();
+        if ($fieldValue !== $expectedValue) {
+            $errors[] = [ParseSpecException::CODE_INVALID_TYPE_NAME, "Expected 'type' field to have the value '$expectedValue', but '$fieldValue' given.'"];
+        }
+
         return $errors;
     }
 }
