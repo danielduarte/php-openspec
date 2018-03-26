@@ -58,4 +58,35 @@ final class ObjectValidationTest extends TestCase
 
         $this->assertTrue(!$result, "Given value recognized by the spec, even when it should not.");
     }
+
+    public function testExtensionFieldSpec()
+    {
+        $specData = [
+            'type'  => 'object',
+            'extensible' => true,
+            'fields' => [
+                'name'  => ['type' => 'string'],
+                'happy' => ['type' => 'boolean'],
+            ],
+            'extensionFields' => [
+                'type' => 'mixed',
+                'options' => [
+                    ['type' => 'boolean'],
+                    ['type' => 'string']
+                ]
+
+            ]
+        ];
+
+        $value = [
+            'new-field-1' => true,
+            'new-field-2' => false,
+            'new-field-3' => 'something',
+        ];
+
+        $spec = SpecBuilder::getInstance()->build($specData);
+
+        $result = $spec->validate($value);
+        $this->assertTrue($result, "Given value not recognized by the spec, even when it should.");
+    }
 }
