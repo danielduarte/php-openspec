@@ -12,7 +12,7 @@ abstract class Spec
         $errors = $this->_validateSpecData($specData);
 
         if (count($errors) > 0) {
-            throw new ParseSpecException('Invalid spec data.', ParseSpecException::CODE_INVALID_SPEC_DATA, $errors);
+            throw new ParseSpecException('Invalid spec data.', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
         }
     }
 
@@ -36,7 +36,7 @@ abstract class Spec
 
         // Check if $specData is an array
         if (!is_array($specData)) {
-            $errors[] = "Expected array with spec data, '" . gettype($specData) . "' given.";
+            $errors[] = [ParseSpecException::CODE_ARRAY_EXPECTED, "Expected array with spec data, '" . gettype($specData) . "' given."];
             return $errors;
         }
 
@@ -46,7 +46,7 @@ abstract class Spec
         $missingRequiredFields = array_diff($requiredFields, $givenFields);
         if (count($missingRequiredFields) > 0) {
             $missingRequiredMetakeysStr = '\'' . implode('\', \'', $missingRequiredFields) . '\'';
-            $errors[] = "Invalid spec data. Missing required fields $missingRequiredMetakeysStr.";
+            $errors[] = [ParseSpecException::CODE_MISSING_REQUIRED_FIELD, "Invalid spec data. Missing required field(s) $missingRequiredMetakeysStr."];
         }
 
         // Check for unexpected fields
@@ -54,7 +54,7 @@ abstract class Spec
         $unexpectedFields = array_diff($givenFields, $allValidFields);
         if (count($unexpectedFields) > 0) {
             $unexpectedFieldsStr = '\'' . implode('\', \'', $unexpectedFields) . '\'';
-            $errors[] = "Invalid spec data. Unexpected fields $unexpectedFieldsStr.";
+            $errors[] = [ParseSpecException::CODE_UNEXPECTED_FIELDS, "Invalid spec data. Unexpected field(s) $unexpectedFieldsStr."];
         }
 
         return $errors;

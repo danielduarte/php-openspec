@@ -4,6 +4,7 @@ use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
 use OpenSpec\Spec\BooleanSpec;
 use OpenSpec\Spec\Spec;
+use OpenSpec\ParseSpecException;
 
 
 final class BooleanParsingTest extends TestCase
@@ -60,5 +61,23 @@ final class BooleanParsingTest extends TestCase
         sort($allFields);
 
         $this->assertEquals($allFieldsCalculated, $allFields);
+    }
+
+    public function testUnexpectedFields()
+    {
+        $specData = [
+            'type' => 'boolean',
+            'this_is_an_unexpected_field' => 1234,
+            'and_this_is_other' => ['a', 'b']
+        ];
+
+        $exception = null;
+        try {
+            SpecBuilder::getInstance()->build($specData);
+        } catch (ParseSpecException $ex) {
+            $exception = $ex;
+        }
+
+        $this->assertTrue($exception->containsError(ParseSpecException::CODE_UNEXPECTED_FIELDS));
     }
 }
