@@ -3,6 +3,7 @@
 namespace OpenSpec\Spec;
 
 use OpenSpec\SpecBuilder;
+use OpenSpec\ParseSpecException;
 
 
 class ArraySpec extends Spec
@@ -30,7 +31,7 @@ class ArraySpec extends Spec
 
         try {
             $this->_itemsSpec = SpecBuilder::getInstance()->build($fieldValue);
-        } catch (SpecException $ex) {
+        } catch (ParseSpecException $ex) {
             $errors = $ex->getErrors();
         }
 

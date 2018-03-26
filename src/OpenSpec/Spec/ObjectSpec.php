@@ -2,8 +2,8 @@
 
 namespace OpenSpec\Spec;
 
-use OpenSpec\ParseSpecException;
 use OpenSpec\SpecBuilder;
+use OpenSpec\ParseSpecException;
 
 
 class ObjectSpec extends Spec
@@ -11,6 +11,8 @@ class ObjectSpec extends Spec
     protected $_fieldSpecs = [];
 
     protected $_extensible = false;
+
+    protected $_extensionFieldsSpec = null;
 
     public function getTypeName(): string
     {
@@ -74,7 +76,15 @@ class ObjectSpec extends Spec
     {
         $errors = [];
 
-        // @todo implement logic
+        if (!$this->_extensible) {
+            $errors[] = [ParseSpecException::CODE_EXTENSIBLE_EXPECTED, "Field 'extensionFields' can only be used when 'extensible' is true."];
+        }
+
+        try {
+            $this->_extensionFieldsSpec = SpecBuilder::getInstance()->build($fieldValue);
+        } catch (ParseSpecException $ex) {
+            $errors = $ex->getErrors();
+        }
 
         return $errors;
     }
@@ -100,9 +110,14 @@ class ObjectSpec extends Spec
 
             if ($fieldHasSpec) {
                 $fieldSpec = $this->_fieldSpecs[$fieldKey];
-                if (!$fieldSpec->validate($fieldValue)) {
-                    return false;
-                }
+            } elseif ($this->_extensionFieldsSpec !== null) {
+                $fieldSpec = $this->_extensionFieldsSpec;
+            } else {
+                $fieldSpec = null;
+            }
+
+            if ($fieldSpec !== null && !$fieldSpec->validate($fieldValue)) {
+                return false;
             }
         }
 
