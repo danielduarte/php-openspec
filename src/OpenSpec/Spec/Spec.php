@@ -22,6 +22,8 @@ abstract class Spec
 
     public abstract function getOptionalFields(): array;
 
+    public abstract function validate($value): bool;
+
     public function getAllFields(): array
     {
         $reqFields = $this->getRequiredFields();

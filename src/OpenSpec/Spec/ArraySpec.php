@@ -36,4 +36,26 @@ class ArraySpec extends Spec
 
         return $errors;
     }
+
+    public function validate($value): bool
+    {
+        if (!is_array($value)) {
+            return false;
+        }
+
+        $expectedIndex = 0;
+        foreach ($value as $index => $item) {
+            if ($expectedIndex !== $index) {
+                return false;
+            }
+
+            if (!$this->_itemsSpec->validate($item)) {
+                return false;
+            }
+
+            $expectedIndex++;
+        }
+
+        return true;
+    }
 }

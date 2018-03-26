@@ -3,11 +3,12 @@
 namespace OpenSpec\Spec;
 
 use OpenSpec\ParseSpecException;
+use OpenSpec\SpecBuilder;
 
 
 class ObjectSpec extends Spec
 {
-    protected $_fieldSpec = [];
+    protected $_fieldSpecs = [];
 
     protected $_extensible = false;
 
@@ -43,8 +44,8 @@ class ObjectSpec extends Spec
             }
 
             try {
-                $this->_fieldSpec[] = SpecBuilder::getInstance()->build($fieldSpecData);
-            } catch (SpecException $ex) {
+                $this->_fieldSpecs[$fieldKey] = SpecBuilder::getInstance()->build($fieldSpecData);
+            } catch (ParseSpecException $ex) {
                 $fieldErrors = $ex->getErrors();
                 $errors = array_merge($errors, $fieldErrors);
             }
@@ -67,5 +68,35 @@ class ObjectSpec extends Spec
         $this->_extensible = $fieldValue;
 
         return $errors;
+    }
+
+    public function validate($value): bool
+    {
+        if (!is_array($value)) {
+            return false;
+        }
+
+        $specFieldKeys = array_keys($this->_fieldSpecs);
+
+        foreach ($value as $fieldKey => $fieldValue) {
+            if (!is_string($fieldKey)) {
+                return false;
+            }
+
+            $fieldHasSpec = in_array($fieldKey, $specFieldKeys);
+
+            if (!$fieldHasSpec && !$this->_extensible) {
+                return false;
+            }
+
+            if ($fieldHasSpec) {
+                $fieldSpec = $this->_fieldSpecs[$fieldKey];
+                if (!$fieldSpec->validate($fieldValue)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

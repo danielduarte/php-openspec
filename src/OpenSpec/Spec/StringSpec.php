@@ -19,4 +19,9 @@ class StringSpec extends Spec
     {
         return [];
     }
+
+    public function validate($value): bool
+    {
+        return is_string($value);
+    }
 }

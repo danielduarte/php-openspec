@@ -19,4 +19,9 @@ class BooleanSpec extends Spec
     {
         return [];
     }
+
+    public function validate($value): bool
+    {
+        return is_bool($value);
+    }
 }

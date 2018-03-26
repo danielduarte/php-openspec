@@ -3,6 +3,7 @@
 namespace OpenSpec\Spec;
 
 use OpenSpec\ParseSpecException;
+use OpenSpec\SpecBuilder;
 
 
 class MixedSpec extends Spec
@@ -41,7 +42,7 @@ class MixedSpec extends Spec
 
             try {
                 $this->_optionsSpec[] = SpecBuilder::getInstance()->build($optionSpecData);
-            } catch (SpecException $ex) {
+            } catch (ParseSpecException $ex) {
                 $optionErrors = $ex->getErrors();
                 $errors = array_merge($errors, $optionErrors);
             }
@@ -50,5 +51,16 @@ class MixedSpec extends Spec
         }
 
         return $errors;
+    }
+
+    public function validate($value): bool
+    {
+        foreach ($this->_optionsSpec as $optionSpec) {
+            if ($optionSpec->validate($value)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -2,18 +2,19 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
-use OpenSpec\Spec\MixedSpec;
+use OpenSpec\Spec\ObjectSpec;
 use OpenSpec\Spec\Spec;
 use OpenSpec\ParseSpecException;
 
 
-final class MixedParsingTest extends TestCase
+final class ObjectParsingTest extends TestCase
 {
     protected function getSpecInstance(): Spec
     {
         $specData = [
-            'type' => 'mixed',
-            'options' => []
+            'type'       => 'object',
+            'fields'     => [],
+            'extensible' => true
         ];
         $spec = SpecBuilder::getInstance()->build($specData);
 
@@ -24,14 +25,14 @@ final class MixedParsingTest extends TestCase
     {
         $spec = $this->getSpecInstance();
 
-        $this->assertInstanceOf(MixedSpec::class, $spec);
+        $this->assertInstanceOf(ObjectSpec::class, $spec);
     }
 
     public function testSpecCorrectTypeName()
     {
         $spec = $this->getSpecInstance();
 
-        $this->assertEquals($spec->getTypeName(), 'mixed');
+        $this->assertEquals($spec->getTypeName(), 'object');
     }
 
     public function testSpecRequiredFields()
@@ -40,7 +41,7 @@ final class MixedParsingTest extends TestCase
 
         $fields = $spec->getRequiredFields();
         sort($fields);
-        $this->assertEquals($fields, ['options', 'type']);
+        $this->assertEquals($fields, ['fields', 'type']);
     }
 
     public function testSpecOptionalFields()
@@ -49,7 +50,7 @@ final class MixedParsingTest extends TestCase
 
         $fields = $spec->getOptionalFields();
         sort($fields);
-        $this->assertEquals($fields, []);
+        $this->assertEquals($fields, ['extensible']);
     }
 
     public function testSpecAllFields()
@@ -69,7 +70,7 @@ final class MixedParsingTest extends TestCase
 
     public function testMissingRequiredFields()
     {
-        $specData = ['type' => 'mixed'];
+        $specData = ['type' => 'object'];
 
         $exception = null;
         try {
@@ -84,7 +85,7 @@ final class MixedParsingTest extends TestCase
     public function testUnexpectedFields()
     {
         $specData = [
-            'type'                        => 'mixed',
+            'type'                        => 'object',
             'this_is_an_unexpected_field' => 1234,
             'and_this_is_other'           => ['a', 'b']
         ];
@@ -97,5 +98,33 @@ final class MixedParsingTest extends TestCase
         }
 
         $this->assertTrue($exception->containsError(ParseSpecException::CODE_UNEXPECTED_FIELDS));
+    }
+
+    public function testFieldItemsOfInvalidType()
+    {
+        $specData = ['type' => 'object', 'fields' => 'this is a string'];
+
+        $exception = null;
+        try {
+            SpecBuilder::getInstance()->build($specData);
+        } catch (ParseSpecException $ex) {
+            $exception = $ex;
+        }
+
+        $this->assertTrue($exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
+    }
+
+    public function testFieldExtensibleOfInvalidType()
+    {
+        $specData = ['type' => 'object', 'extensible' => 'this is a string'];
+
+        $exception = null;
+        try {
+            SpecBuilder::getInstance()->build($specData);
+        } catch (ParseSpecException $ex) {
+            $exception = $ex;
+        }
+
+        $this->assertTrue($exception->containsError(ParseSpecException::CODE_INVALID_SPEC_DATA));
     }
 }
