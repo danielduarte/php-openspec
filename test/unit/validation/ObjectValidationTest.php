@@ -89,4 +89,27 @@ final class ObjectValidationTest extends TestCase
         $result = $spec->validate($value);
         $this->assertTrue($result, "Given value not recognized by the spec, even when it should.");
     }
+
+    public function testValidValueWithNumericStringKeys()
+    {
+        $specData = [
+            'type'  => 'object',
+            'fields' => [
+                '200'   => ['type' => 'boolean'],
+                'hello' => ['type' => 'boolean'],
+                '400'   => ['type' => 'boolean'],
+            ]
+        ];
+        $spec = SpecBuilder::getInstance()->build($specData);
+
+        $value =  [
+            '200'   => true,
+            'hello' => true,
+            '400'   => true,
+        ];
+
+        $result = $spec->validate($value);
+
+        $this->assertTrue($result, "Given value not recognized by the spec, even when it should.");
+    }
 }
