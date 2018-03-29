@@ -17,12 +17,12 @@ class ArraySpec extends Spec
 
     public function getRequiredFields(): array
     {
-        return ['type', 'items'];
+        return ['type'];
     }
 
     public function getOptionalFields(): array
     {
-        return [];
+        return ['items'];
     }
 
     protected function _validateFieldSpecData_items($fieldValue): array
@@ -42,6 +42,10 @@ class ArraySpec extends Spec
     {
         if (!is_array($value)) {
             return false;
+        }
+
+        if ($this->_itemsSpec === null) {
+            return true;
         }
 
         $expectedIndex = 0;

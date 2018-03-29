@@ -41,7 +41,7 @@ final class ArrayParsingTest extends TestCase
 
         $fields = $spec->getRequiredFields();
         sort($fields);
-        $this->assertEquals($fields, ['items', 'type']);
+        $this->assertEquals($fields, ['type']);
     }
 
     public function testSpecOptionalFields()
@@ -50,7 +50,7 @@ final class ArrayParsingTest extends TestCase
 
         $fields = $spec->getOptionalFields();
         sort($fields);
-        $this->assertEquals($fields, []);
+        $this->assertEquals($fields, ['items']);
     }
 
     public function testSpecAllFields()
@@ -66,20 +66,6 @@ final class ArrayParsingTest extends TestCase
         sort($allFields);
 
         $this->assertEquals($allFieldsCalculated, $allFields);
-    }
-
-    public function testMissingRequiredFields()
-    {
-        $specData = ['type' => 'array'];
-
-        $exception = null;
-        try {
-            SpecBuilder::getInstance()->build($specData);
-        } catch (ParseSpecException $ex) {
-            $exception = $ex;
-        }
-
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_MISSING_REQUIRED_FIELD));
     }
 
     public function testUnexpectedFields()
@@ -112,5 +98,19 @@ final class ArrayParsingTest extends TestCase
         }
 
         $this->assertTrue($exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
+    }
+
+    public function testValidArrayOfAny()
+    {
+        $specData = ['type' => 'array'];
+
+        try {
+            SpecBuilder::getInstance()->build($specData);
+            $errors = [];
+        } catch (ParseSpecException $ex) {
+            $errors = $ex->getErrors();
+        }
+
+        $this->assertTrue(count($errors) === 0, "Spec for array of any element not validates as expected.");
     }
 }

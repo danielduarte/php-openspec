@@ -112,10 +112,8 @@ class ObjectSpec extends Spec
 
             if ($fieldHasSpec) {
                 $fieldSpec = $this->_fieldSpecs[$fieldKey];
-            } elseif ($this->_extensionFieldsSpec !== null) {
-                $fieldSpec = $this->_extensionFieldsSpec;
             } else {
-                $fieldSpec = null;
+                $fieldSpec = $this->_extensionFieldsSpec;
             }
 
             if ($fieldSpec !== null && !$fieldSpec->validate($fieldValue)) {

@@ -80,7 +80,7 @@ final class ArrayValidationTest extends TestCase
         $this->assertTrue($result, "Not validated array of arrays of string|boolean.");
         // End: 1 ------------------------------------------------
 
-        // 1 ------------------------------------------------
+        // 2 ------------------------------------------------
         $specData  = [
             'type'  => 'object',
             'extensible' => true,
@@ -123,5 +123,27 @@ final class ArrayValidationTest extends TestCase
 
         $this->assertTrue($result, "Not validated person info.");
         // End: 2 ------------------------------------------------
+
+        // 3 ------------------------------------------------
+        $specData  = ['type'  => 'array'];
+        $values = [
+            [], // Empty array
+            [false, true, true], // Boolean array
+            ["hello", "bye"], // String array
+            [null, null, null], // Null array
+            [['name' => 'Daniel', 'alias' => 'Dani'], ['a' => 1, 'b' => [2, 3]]], // Object array
+            [[], ['field' => 'value'], [null, false, "hi!"]], // Array of arrays (bidimensional array / matrix)
+        ];
+
+        $spec = SpecBuilder::getInstance()->build($specData);
+        foreach ($values as $value) {
+            $result = $spec->validate($value);
+            $this->assertTrue($result, "Not validated array.");
+        }
+
+        $complexValue = $values;
+        $result = $spec->validate($complexValue);
+        $this->assertTrue($result, "Not validated array of any type of items.");
+        // End: 3 ------------------------------------------------
     }
 }
