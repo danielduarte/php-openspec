@@ -21,12 +21,12 @@ class ObjectSpec extends Spec
 
     public function getRequiredFields(): array
     {
-        return ['fields', 'type'];
+        return ['type'];
     }
 
     public function getOptionalFields(): array
     {
-        return ['extensible', 'extensionFields'];
+        return ['fields', 'extensible', 'extensionFields'];
     }
 
     protected function _validateFieldSpecData_fields($fieldValue): array

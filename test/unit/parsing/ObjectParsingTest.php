@@ -41,7 +41,7 @@ final class ObjectParsingTest extends TestCase
 
         $fields = $spec->getRequiredFields();
         sort($fields);
-        $this->assertEquals($fields, ['fields', 'type']);
+        $this->assertEquals($fields, ['type']);
     }
 
     public function testSpecOptionalFields()
@@ -50,7 +50,7 @@ final class ObjectParsingTest extends TestCase
 
         $fields = $spec->getOptionalFields();
         sort($fields);
-        $this->assertEquals($fields, ['extensible', 'extensionFields']);
+        $this->assertEquals($fields, ['extensible', 'extensionFields', 'fields']);
     }
 
     public function testSpecAllFields()
@@ -66,20 +66,6 @@ final class ObjectParsingTest extends TestCase
         sort($allFields);
 
         $this->assertEquals($allFieldsCalculated, $allFields);
-    }
-
-    public function testMissingRequiredFields()
-    {
-        $specData = ['type' => 'object'];
-
-        $exception = null;
-        try {
-            SpecBuilder::getInstance()->build($specData);
-        } catch (ParseSpecException $ex) {
-            $exception = $ex;
-        }
-
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_MISSING_REQUIRED_FIELD));
     }
 
     public function testUnexpectedFields()
@@ -168,5 +154,19 @@ final class ObjectParsingTest extends TestCase
         }
 
         $this->assertTrue($exception->containsError(ParseSpecException::CODE_EXTENSIBLE_EXPECTED));
+    }
+
+    public function testValidObjectWithNoFieldSpecs()
+    {
+        $specData = ['type' => 'object'];
+
+        try {
+            SpecBuilder::getInstance()->build($specData);
+            $errors = [];
+        } catch (ParseSpecException $ex) {
+            $errors = $ex->getErrors();
+        }
+
+        $this->assertTrue(count($errors) === 0, "Spec for object with no field specs not validates as expected.");
     }
 }

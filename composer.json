@@ -1,6 +1,6 @@
 {
   "name": "daniel-duarte/php-openspec",
-  "description": "OpenSpec PHP",
+  "description": "OpenSpec for PHP",
   "type": "library",
   "license": "MIT",
   "homepage": "https://github.com/daniel-duarte/php-openspec/blob/master/README.md",
@@ -9,6 +9,10 @@
     "psr-4": {
       "OpenSpec\\": "src/OpenSpec"
     }
+  },
+
+  "require": {
+    "php": "^7.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^7"

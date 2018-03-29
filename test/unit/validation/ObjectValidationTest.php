@@ -112,4 +112,50 @@ final class ObjectValidationTest extends TestCase
 
         $this->assertTrue($result, "Given value not recognized by the spec, even when it should.");
     }
+
+    public function testEmptyObjectValueWithFieldSpecs()
+    {
+        $specData = [
+            'type'  => 'object',
+            'fields' => [
+                'field1' => ['type' => 'string'],
+                'field2' => ['type' => 'null']
+            ]
+        ];
+        $spec = SpecBuilder::getInstance()->build($specData);
+
+        $value =  [];
+
+        $result = $spec->validate($value);
+
+        $this->assertTrue($result, "Empty object value not recognized, even when it should.");
+    }
+
+    public function testEmptyObjectValue()
+    {
+        $specData = ['type'  => 'object'];
+        $spec = SpecBuilder::getInstance()->build($specData);
+
+        $value =  [];
+
+        $result = $spec->validate($value);
+
+        $this->assertTrue($result, "Empty object value not recognized, even when it should.");
+    }
+
+    public function testObjectValueWithNoFieldSpecs()
+    {
+        $specData = ['type'  => 'object', 'extensible' => true];
+        $spec = SpecBuilder::getInstance()->build($specData);
+
+        $value =  [
+            'field1' => true,
+            'field2' => null,
+            'field3' => 9876,
+        ];
+
+        $result = $spec->validate($value);
+
+        $this->assertTrue($result, "Given value not recognized by the object spec without field specs, even when it should.");
+    }
 }
