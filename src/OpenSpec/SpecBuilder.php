@@ -38,12 +38,13 @@ class SpecBuilder
         }
 
         $classMap = [
-            'string'  => '\OpenSpec\Spec\StringSpec',
+            'null'    => '\OpenSpec\Spec\NullSpec',
             'boolean' => '\OpenSpec\Spec\BooleanSpec',
+            'string'  => '\OpenSpec\Spec\StringSpec',
             'object'  => '\OpenSpec\Spec\ObjectSpec',
             'array'   => '\OpenSpec\Spec\ArraySpec',
             'mixed'   => '\OpenSpec\Spec\MixedSpec',
-            'null'    => '\OpenSpec\Spec\NullSpec',
+            'ref'     => '\OpenSpec\Spec\RefSpec',
         ];
 
         if (!array_key_exists($type, $classMap)) {
