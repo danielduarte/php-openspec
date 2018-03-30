@@ -22,7 +22,14 @@ abstract class TypeSpec
 
     public abstract function getOptionalFields(): array;
 
-    public abstract function validate($value): bool;
+    public abstract function validateGetErrors($value): array;
+
+    public function validate($value): bool
+    {
+        $errors = $this->validateGetErrors($value);
+
+        return count($errors) === 0;
+    }
 
     public function getAllFields(): array
     {

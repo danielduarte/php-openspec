@@ -2,6 +2,8 @@
 
 namespace OpenSpec\Spec\Type;
 
+use OpenSpec\ParseSpecException;
+
 
 class BooleanSpec extends TypeSpec
 {
@@ -20,8 +22,14 @@ class BooleanSpec extends TypeSpec
         return [];
     }
 
-    public function validate($value): bool
+    public function validateGetErrors($value): array
     {
-        return is_bool($value);
+        $errors = [];
+
+        if (!is_bool($value)) {
+            $errors[] = [ParseSpecException::CODE_BOOLEAN_EXPECTED, "Expected boolean value for 'boolean' type spec."];
+        }
+
+        return $errors;
     }
 }

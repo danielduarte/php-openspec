@@ -38,29 +38,36 @@ class ArraySpec extends TypeSpec
         return $errors;
     }
 
-    public function validate($value): bool
+    public function validateGetErrors($value): array
     {
+        $errors = [];
+
         if (!is_array($value)) {
-            return false;
+            $errors[] = [ParseSpecException::CODE_ARRAY_EXPECTED, "Array expected as value of 'array' spec, but " . gettype($value) . " given."];
+            return $errors;
         }
 
         if ($this->_itemsSpec === null) {
-            return true;
+            // No errors
+            return $errors;
         }
 
         $expectedIndex = 0;
         foreach ($value as $index => $item) {
             if ($expectedIndex !== $index) {
-                return false;
+                $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Index in value of 'array' spec expected to be integer and consecutive."];
+                return $errors;
             }
 
             if (!$this->_itemsSpec->validate($item)) {
-                return false;
+                $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Array item with index $index does not follow the spec."];
+                return $errors;
             }
 
             $expectedIndex++;
         }
 
-        return true;
+        // No errors
+        return $errors;
     }
 }

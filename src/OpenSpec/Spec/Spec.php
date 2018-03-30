@@ -18,8 +18,9 @@ class Spec
 
     public function __construct(array $specData)
     {
-        if (!$this->_validateSpecData($specData)) {
-            throw new ParseSpecException('Invalid spec data.', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR);
+        $errors = $this->_validateSpecData($specData);
+        if (count($errors) > 0) {
+            throw new ParseSpecException('Invalid spec data.', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
         }
 
         $this->_name    = $specData['name'];
@@ -27,7 +28,7 @@ class Spec
         $this->_spec = SpecBuilder::getInstance()->build($specData['spec']);
     }
 
-    protected function _validateSpecData($specData)
+    protected function _validateSpecData($specData): array
     {
         return SpecBuilder::getInstance()->build([
             'type'   => 'object',
@@ -43,7 +44,8 @@ class Spec
                     ['type' => 'array'],
                 ]],
                 'definitions' => ['type' => 'object', 'extensible' => true],
-            ]
-        ])->validate($specData);
+            ],
+            'requiredFields' => ['openspec']
+        ])->validateGetErrors($specData);
     }
 }

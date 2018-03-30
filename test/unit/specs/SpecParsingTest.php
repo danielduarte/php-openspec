@@ -1,8 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use OpenSpec\SpecBuilder;
 use OpenSpec\ParseSpecException;
+use OpenSpec\Spec\Spec;
 
 
 final class SpecParsingTest extends TestCase
@@ -34,13 +34,13 @@ final class SpecParsingTest extends TestCase
             'spec'     => ['type' => 'string']
         ];
 
+        $exception = null;
         try {
-            new \OpenSpec\Spec\Spec($specData);
-            $error = false;
-        } catch (\Exception $ex) {
-            $error = true;
+            new Spec($specData);
+        } catch (ParseSpecException $ex) {
+            $exception = $ex;
         }
 
-        $this->assertTrue($error, 'Expected error trying to parse invalid spec, but no error occurred.');
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_MISSING_REQUIRED_FIELD), "Expected 'missing required field' error trying to parse invalid spec, but no error occurred.");
     }
 }

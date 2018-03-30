@@ -18,6 +18,8 @@ class ParseSpecException extends RuntimeException
     const CODE_UNEXPECTED_FIELDS      =  9;
     const CODE_INVALID_TYPE_NAME      = 10;
     const CODE_EXTENSIBLE_EXPECTED    = 11;
+    const CODE_NULL_EXPECTED          = 12;
+    const CODE_BOOLEAN_EXPECTED       = 13;
 
     protected $_errors;
 

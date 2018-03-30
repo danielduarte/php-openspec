@@ -2,6 +2,8 @@
 
 namespace OpenSpec\Spec\Type;
 
+use OpenSpec\ParseSpecException;
+
 
 class StringSpec extends TypeSpec
 {
@@ -20,8 +22,14 @@ class StringSpec extends TypeSpec
         return [];
     }
 
-    public function validate($value): bool
+    public function validateGetErrors($value): array
     {
-        return is_string($value);
+        $errors = [];
+
+        if (!is_string($value)) {
+            $errors[] = [ParseSpecException::CODE_STRING_EXPECTED, "Expected string value for 'string' type spec."];
+        }
+
+        return $errors;
     }
 }

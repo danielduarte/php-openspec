@@ -79,8 +79,15 @@ class SpecLibrary
         return $this->_specs[$name];
     }
 
-    public function validateValue($specName, $value)
+    public function validateValue(string $specName, $value): bool
     {
-        return $this->getSpec($specName)->validate($value);
+        $errors = $this->validateValueGetErrors($specName, $value);
+
+        return count($errors) === 0;
+    }
+
+    public function validateValueGetErrors(string $specName, $value): array
+    {
+        return $this->getSpec($specName)->validateGetErrors($value);
     }
 }

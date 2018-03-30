@@ -13,7 +13,11 @@ final class ObjectParsingTest extends TestCase
     {
         $specData = [
             'type'       => 'object',
-            'fields'     => [],
+            'fields'     => [
+                'field1' => ['type' => 'string'],
+                'field2' => ['type' => 'string'],
+            ],
+            'requiredFields' => ['field1'],
             'extensible' => true
         ];
         $spec = SpecBuilder::getInstance()->build($specData);
@@ -50,7 +54,7 @@ final class ObjectParsingTest extends TestCase
 
         $fields = $spec->getOptionalFields();
         sort($fields);
-        $this->assertEquals($fields, ['extensible', 'extensionFields', 'fields']);
+        $this->assertEquals($fields, ['extensible', 'extensionFields', 'fields', 'requiredFields']);
     }
 
     public function testSpecAllFields()
@@ -86,7 +90,7 @@ final class ObjectParsingTest extends TestCase
         $this->assertTrue($exception->containsError(ParseSpecException::CODE_UNEXPECTED_FIELDS));
     }
 
-    public function testFieldItemsOfInvalidType()
+    public function testFieldFieldsOfInvalidType()
     {
         $specData = ['type' => 'object', 'fields' => 'this is a string'];
 
@@ -98,6 +102,34 @@ final class ObjectParsingTest extends TestCase
         }
 
         $this->assertTrue($exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
+    }
+
+    public function testFieldRequiredFieldsOfInvalidType()
+    {
+        $specData = ['type' => 'object', 'fields' => [], 'requiredFields' => 'An array should be here'];
+
+        $exception = null;
+        try {
+            SpecBuilder::getInstance()->build($specData);
+        } catch (ParseSpecException $ex) {
+            $exception = $ex;
+        }
+
+        $this->assertTrue($exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
+    }
+
+    public function testFieldRequiredFieldsWithInvalidItems()
+    {
+        $specData = ['type' => 'object', 'fields' => [], 'requiredFields' => ['correct1', 'correct2', 1234, 'correct3']];
+
+        $exception = null;
+        try {
+            SpecBuilder::getInstance()->build($specData);
+        } catch (ParseSpecException $ex) {
+            $exception = $ex;
+        }
+
+        $this->assertTrue($exception->containsError(ParseSpecException::CODE_STRING_EXPECTED));
     }
 
     public function testFieldExtensibleOfInvalidType()
