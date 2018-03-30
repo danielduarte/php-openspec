@@ -2,8 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
-use OpenSpec\Spec\MixedSpec;
-use OpenSpec\Spec\Spec;
+use OpenSpec\Spec\Type\MixedSpec;
+use OpenSpec\Spec\Type\Spec;
 use OpenSpec\ParseSpecException;
 
 

@@ -2,7 +2,7 @@
 
 namespace OpenSpec;
 
-use OpenSpec\Spec\Spec;
+use OpenSpec\Spec\Type\Spec;
 
 
 class SpecLibrary

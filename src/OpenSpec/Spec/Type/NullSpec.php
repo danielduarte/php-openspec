@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenSpec\Spec;
+namespace OpenSpec\Spec\Type;
 
 
 class NullSpec extends Spec

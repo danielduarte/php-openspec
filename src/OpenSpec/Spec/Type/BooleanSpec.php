@@ -1,13 +1,13 @@
 <?php
 
-namespace OpenSpec\Spec;
+namespace OpenSpec\Spec\Type;
 
 
-class StringSpec extends Spec
+class BooleanSpec extends Spec
 {
     public function getTypeName(): string
     {
-        return 'string';
+        return 'boolean';
     }
 
     public function getRequiredFields(): array
@@ -22,6 +22,6 @@ class StringSpec extends Spec
 
     public function validate($value): bool
     {
-        return is_string($value);
+        return is_bool($value);
     }
 }

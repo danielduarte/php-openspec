@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
-use OpenSpec\Spec\Spec;
+use OpenSpec\Spec\Type\Spec;
 use OpenSpec\SpecLibrary;
 
 
@@ -19,10 +19,10 @@ final class RefValidationTest extends TestCase
         $library = SpecLibrary::getInstance();
         if (!$library->hasSpec('Link')) {
             $specData = [
-                'type' => 'object',
+                'type'   => 'object',
                 'fields' => [
                     'title' => ['type' => 'string'],
-                    'url' => ['type' => 'string']
+                    'url'   => ['type' => 'string']
                 ]
             ];
             $library->registerSpecFromData('Link', $specData);

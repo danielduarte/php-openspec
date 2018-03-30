@@ -2,8 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
-use OpenSpec\Spec\StringSpec;
-use OpenSpec\Spec\Spec;
+use OpenSpec\Spec\Type\StringSpec;
+use OpenSpec\Spec\Type\Spec;
 use OpenSpec\ParseSpecException;
 
 

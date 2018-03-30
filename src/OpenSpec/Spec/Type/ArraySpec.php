@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenSpec\Spec;
+namespace OpenSpec\Spec\Type;
 
 use OpenSpec\SpecBuilder;
 use OpenSpec\ParseSpecException;
