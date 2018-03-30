@@ -3,10 +3,13 @@
 namespace OpenSpec\Spec;
 
 use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 class RefSpec extends Spec
 {
+    protected $_specName = null;
+
     public function getTypeName(): string
     {
         return 'ref';
@@ -31,6 +34,8 @@ class RefSpec extends Spec
             return $errors;
         }
 
+        $this->_specName = $fieldValue;
+
         // @todo consider if it will be needed to check the existence of the referenced spec.
 
         return $errors;
@@ -38,7 +43,12 @@ class RefSpec extends Spec
 
     public function validate($value): bool
     {
-        // @todo implement validation
-        return true;
+        $library = SpecLibrary::getInstance();
+
+        if (!$library->hasSpec($this->_specName)) {
+            return false;
+        }
+
+        return $library->validateValue($this->_specName, $value);
     }
 }

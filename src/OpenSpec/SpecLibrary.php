@@ -59,6 +59,7 @@ class SpecLibrary
         return $spec;
     }
 
+    // @todo check if this method is useful
     public function getSpecsCount(): int
     {
         return count($this->_specs);
@@ -67,5 +68,19 @@ class SpecLibrary
     public function unregisterAll()
     {
         $this->_specs = [];
+    }
+
+    public function getSpec($name)
+    {
+        if (!$this->hasSpec($name)) {
+            throw new SpecLibraryException();
+        }
+
+        return $this->_specs[$name];
+    }
+
+    public function validateValue($specName, $value)
+    {
+        return $this->getSpec($specName)->validate($value);
     }
 }

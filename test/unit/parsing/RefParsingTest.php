@@ -67,6 +67,7 @@ final class RefParsingTest extends TestCase
     {
         $specData = [
             'type'                        => 'ref',
+            'spec'                        => 'Address',
             'this_is_an_unexpected_field' => 1234,
             'and_this_is_other'           => ['a', 'b']
         ];

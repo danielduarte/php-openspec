@@ -2,10 +2,10 @@
 
 namespace OpenSpec;
 
+use RuntimeException;
 
-use Throwable;
 
-class ParseSpecException extends \RuntimeException
+class ParseSpecException extends RuntimeException
 {
     const CODE_GENERAL_PARSER_ERROR   =  1;
     const CODE_MULTIPLE_PARSER_ERROR  =  2;
