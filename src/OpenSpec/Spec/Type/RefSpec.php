@@ -6,7 +6,7 @@ use OpenSpec\ParseSpecException;
 use OpenSpec\SpecLibrary;
 
 
-class RefSpec extends Spec
+class RefSpec extends TypeSpec
 {
     protected $_specName = null;
 

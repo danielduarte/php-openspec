@@ -2,16 +2,16 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
-use OpenSpec\Spec\Type\StringSpec;
-use OpenSpec\Spec\Type\Spec;
+use OpenSpec\Spec\Type\BooleanSpec;
+use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\ParseSpecException;
 
 
-final class StringParsingTest extends TestCase
+final class BooleanParsingTest extends TestCase
 {
-    protected function getSpecInstance(): Spec
+    protected function getSpecInstance(): TypeSpec
     {
-        $specData = ['type' => 'string'];
+        $specData = ['type' => 'boolean'];
         $spec = SpecBuilder::getInstance()->build($specData);
 
         return $spec;
@@ -21,14 +21,13 @@ final class StringParsingTest extends TestCase
     {
         $spec = $this->getSpecInstance();
 
-        $this->assertInstanceOf(StringSpec::class, $spec);
+        $this->assertInstanceOf(BooleanSpec::class, $spec);
     }
 
     public function testSpecCorrectTypeName()
     {
         $spec = $this->getSpecInstance();
-
-        $this->assertEquals($spec->getTypeName(), 'string');
+        $this->assertEquals($spec->getTypeName(), 'boolean');
     }
 
     public function testSpecRequiredFields()
@@ -67,7 +66,7 @@ final class StringParsingTest extends TestCase
     public function testUnexpectedFields()
     {
         $specData = [
-            'type'                        => 'string',
+            'type'                        => 'boolean',
             'this_is_an_unexpected_field' => 1234,
             'and_this_is_other'           => ['a', 'b']
         ];

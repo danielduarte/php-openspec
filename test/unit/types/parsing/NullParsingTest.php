@@ -2,16 +2,16 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
-use OpenSpec\Spec\Type\RefSpec;
-use OpenSpec\Spec\Type\Spec;
+use OpenSpec\Spec\Type\NullSpec;
+use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\ParseSpecException;
 
 
-final class RefParsingTest extends TestCase
+final class NullParsingTest extends TestCase
 {
-    protected function getSpecInstance(): Spec
+    protected function getSpecInstance(): TypeSpec
     {
-        $specData = ['type' => 'ref', 'spec' => 'Link'];
+        $specData = ['type' => 'null'];
         $spec = SpecBuilder::getInstance()->build($specData);
 
         return $spec;
@@ -21,13 +21,13 @@ final class RefParsingTest extends TestCase
     {
         $spec = $this->getSpecInstance();
 
-        $this->assertInstanceOf(RefSpec::class, $spec);
+        $this->assertInstanceOf(NullSpec::class, $spec);
     }
 
     public function testSpecCorrectTypeName()
     {
         $spec = $this->getSpecInstance();
-        $this->assertEquals($spec->getTypeName(), 'ref');
+        $this->assertEquals($spec->getTypeName(), 'null');
     }
 
     public function testSpecRequiredFields()
@@ -36,7 +36,7 @@ final class RefParsingTest extends TestCase
 
         $fields = $spec->getRequiredFields();
         sort($fields);
-        $this->assertEquals($fields, ['spec', 'type']);
+        $this->assertEquals($fields, ['type']);
     }
 
     public function testSpecOptionalFields()
@@ -66,8 +66,7 @@ final class RefParsingTest extends TestCase
     public function testUnexpectedFields()
     {
         $specData = [
-            'type'                        => 'ref',
-            'spec'                        => 'Address',
+            'type'                        => 'null',
             'this_is_an_unexpected_field' => 1234,
             'and_this_is_other'           => ['a', 'b']
         ];

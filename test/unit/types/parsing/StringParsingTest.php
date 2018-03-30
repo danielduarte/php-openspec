@@ -2,20 +2,16 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
-use OpenSpec\Spec\Type\ArraySpec;
-use OpenSpec\Spec\Type\Spec;
+use OpenSpec\Spec\Type\StringSpec;
+use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\ParseSpecException;
 
 
-final class ArrayParsingTest extends TestCase
+final class StringParsingTest extends TestCase
 {
-    protected function getSpecInstance(): Spec
+    protected function getSpecInstance(): TypeSpec
     {
-        $specData = [
-            'type'  => 'array',
-            'items' => ['type' => 'string']
-        ];
-
+        $specData = ['type' => 'string'];
         $spec = SpecBuilder::getInstance()->build($specData);
 
         return $spec;
@@ -25,14 +21,14 @@ final class ArrayParsingTest extends TestCase
     {
         $spec = $this->getSpecInstance();
 
-        $this->assertInstanceOf(ArraySpec::class, $spec);
+        $this->assertInstanceOf(StringSpec::class, $spec);
     }
 
     public function testSpecCorrectTypeName()
     {
         $spec = $this->getSpecInstance();
 
-        $this->assertEquals($spec->getTypeName(), 'array');
+        $this->assertEquals($spec->getTypeName(), 'string');
     }
 
     public function testSpecRequiredFields()
@@ -50,7 +46,7 @@ final class ArrayParsingTest extends TestCase
 
         $fields = $spec->getOptionalFields();
         sort($fields);
-        $this->assertEquals($fields, ['items']);
+        $this->assertEquals($fields, []);
     }
 
     public function testSpecAllFields()
@@ -71,7 +67,7 @@ final class ArrayParsingTest extends TestCase
     public function testUnexpectedFields()
     {
         $specData = [
-            'type'                        => 'array',
+            'type'                        => 'string',
             'this_is_an_unexpected_field' => 1234,
             'and_this_is_other'           => ['a', 'b']
         ];
@@ -84,33 +80,5 @@ final class ArrayParsingTest extends TestCase
         }
 
         $this->assertTrue($exception->containsError(ParseSpecException::CODE_UNEXPECTED_FIELDS));
-    }
-
-    public function testFieldItemsOfInvalidType()
-    {
-        $specData = ['type' => 'array', 'items' => 'this is a string'];
-
-        $exception = null;
-        try {
-            SpecBuilder::getInstance()->build($specData);
-        } catch (ParseSpecException $ex) {
-            $exception = $ex;
-        }
-
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
-    }
-
-    public function testValidArrayOfAny()
-    {
-        $specData = ['type' => 'array'];
-
-        try {
-            SpecBuilder::getInstance()->build($specData);
-            $errors = [];
-        } catch (ParseSpecException $ex) {
-            $errors = $ex->getErrors();
-        }
-
-        $this->assertTrue(count($errors) === 0, "Spec for array of any element not validates as expected.");
     }
 }

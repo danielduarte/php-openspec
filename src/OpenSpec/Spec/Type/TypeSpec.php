@@ -5,7 +5,7 @@ namespace OpenSpec\Spec\Type;
 use OpenSpec\ParseSpecException;
 
 
-abstract class Spec
+abstract class TypeSpec
 {
     public function __construct(array $specData)
     {

@@ -3,7 +3,7 @@
 namespace OpenSpec\Spec\Type;
 
 
-class NullSpec extends Spec
+class NullSpec extends TypeSpec
 {
     public function getTypeName(): string
     {

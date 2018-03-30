@@ -6,7 +6,7 @@ use OpenSpec\SpecBuilder;
 use OpenSpec\ParseSpecException;
 
 
-class ObjectSpec extends Spec
+class ObjectSpec extends TypeSpec
 {
     protected $_fieldSpecs = [];
 

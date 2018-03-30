@@ -3,13 +3,13 @@
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
 use OpenSpec\Spec\Type\ObjectSpec;
-use OpenSpec\Spec\Type\Spec;
+use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\ParseSpecException;
 
 
 final class ObjectParsingTest extends TestCase
 {
-    protected function getSpecInstance(): Spec
+    protected function getSpecInstance(): TypeSpec
     {
         $specData = [
             'type'       => 'object',

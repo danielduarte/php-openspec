@@ -21,6 +21,6 @@ final class SpecBuilderTest extends TestCase
 
         $this->assertInstanceOf(SpecBuilder::class, $builder1);
 
-        $this->assertTrue($builder1 === $builder2, 'Spec Builder is not a singleton since more than one instance could be created.');
+        $this->assertTrue($builder1 === $builder2, 'Type Spec Builder is not a singleton since more than one instance could be created.');
     }
 }

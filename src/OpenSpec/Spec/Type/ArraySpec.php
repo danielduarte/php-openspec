@@ -6,7 +6,7 @@ use OpenSpec\SpecBuilder;
 use OpenSpec\ParseSpecException;
 
 
-class ArraySpec extends Spec
+class ArraySpec extends TypeSpec
 {
     protected $_itemsSpec = null;
 

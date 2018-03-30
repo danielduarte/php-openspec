@@ -3,13 +3,13 @@
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
 use OpenSpec\Spec\Type\NullSpec;
-use OpenSpec\Spec\Type\Spec;
+use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\ParseSpecException;
 
 
 final class NullValidationTest extends TestCase
 {
-    protected function getSpecInstance(): Spec
+    protected function getSpecInstance(): TypeSpec
     {
         $specData = ['type' => 'null'];
         $spec = SpecBuilder::getInstance()->build($specData);

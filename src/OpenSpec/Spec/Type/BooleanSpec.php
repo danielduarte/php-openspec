@@ -3,7 +3,7 @@
 namespace OpenSpec\Spec\Type;
 
 
-class BooleanSpec extends Spec
+class BooleanSpec extends TypeSpec
 {
     public function getTypeName(): string
     {

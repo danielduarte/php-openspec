@@ -6,7 +6,7 @@ use OpenSpec\ParseSpecException;
 use OpenSpec\SpecBuilder;
 
 
-class MixedSpec extends Spec
+class MixedSpec extends TypeSpec
 {
     protected $_optionsSpec = [];
 

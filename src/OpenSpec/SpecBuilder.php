@@ -2,7 +2,7 @@
 
 namespace OpenSpec;
 
-use OpenSpec\Spec\Type\Spec;
+use OpenSpec\Spec\Type\TypeSpec;
 
 
 class SpecBuilder
@@ -22,7 +22,7 @@ class SpecBuilder
         return static::$_instance;
     }
 
-    public function build($specData): Spec
+    public function build($specData): TypeSpec
     {
         if (!is_array($specData)) {
             throw new ParseSpecException('Expected array as spec data, but ' . gettype($specData) . ' given.', ParseSpecException::CODE_ARRAY_EXPECTED);
