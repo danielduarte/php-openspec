@@ -17,13 +17,13 @@ final class SpecParsingTest extends TestCase
         ];
 
         try {
-            new \OpenSpec\Spec\Spec($specData);
-            $error = false;
-        } catch (\Exception $ex) {
-            $error = true;
+            new Spec($specData);
+            $errorMsg = null;
+        } catch (ParseSpecException $ex) {
+            $errorMsg = $ex->getMessage();
         }
 
-        $this->assertFalse($error, 'Error trying to parse valid spec.');
+        $this->assertTrue($errorMsg === null, 'Error trying to parse valid spec:' . PHP_EOL . $errorMsg);
     }
 
     public function testParseNotValidSpec()

@@ -55,7 +55,7 @@ abstract class TypeSpec
         $missingRequiredFields = array_diff($requiredFields, $givenFields);
         if (count($missingRequiredFields) > 0) {
             $missingRequiredMetakeysStr = '\'' . implode('\', \'', $missingRequiredFields) . '\'';
-            $errors[] = [ParseSpecException::CODE_MISSING_REQUIRED_FIELD, "Invalid spec data. Missing required field(s) $missingRequiredMetakeysStr."];
+            $errors[] = [ParseSpecException::CODE_MISSING_REQUIRED_FIELD, "Missing required field(s) $missingRequiredMetakeysStr in type spec '" . $this->getTypeName() . "'."];
         }
 
         // Check for unexpected fields
