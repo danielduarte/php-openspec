@@ -27,7 +27,7 @@ class BooleanSpec extends TypeSpec
         $errors = [];
 
         if (!is_bool($value)) {
-            $errors[] = [ParseSpecException::CODE_BOOLEAN_EXPECTED, "Expected boolean value for 'boolean' type spec."];
+            $errors[] = [ParseSpecException::CODE_BOOLEAN_EXPECTED, "Expected boolean value for 'boolean' type spec, but " . gettype($value) . " given."];
         }
 
         return $errors;

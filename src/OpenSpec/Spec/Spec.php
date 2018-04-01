@@ -17,8 +17,6 @@ class Spec
 
     protected $_spec = null;
 
-    protected $_definitions = [];
-
     public function __construct(array $specData)
     {
         $errors = $this->_validateSpecData($specData);
@@ -31,7 +29,12 @@ class Spec
         $this->_name            = $specData['name'];
         $this->_version         = array_key_exists('version', $specData) ? $specData['version'] : null;
         $this->_spec            = SpecBuilder::getInstance()->build($specData['spec']);
-        $this->_definitions     = array_key_exists('definitions', $specData) ? $this->_parseDefinitions($specData['definitions']) : null;
+
+        if (array_key_exists('definitions', $specData)) {
+            $this->_parseDefinitions($specData['definitions']);
+        }
+
+        // @todo check here the missing references (refs to definitions that are not specified)
     }
 
     protected function _validateSpecData($specData): array
@@ -50,10 +53,20 @@ class Spec
         ])->validateGetErrors($specData);
     }
 
-    protected function _parseDefinitions($definitionsData): array
+    protected function _parseDefinitions($definitionsData): void
     {
         foreach ($definitionsData as $defName => $defSpec) {
             SpecLibrary::getInstance()->registerSpecFromData($defName, $defSpec);
         }
+    }
+
+    public function validateGetErrors($userSpecData): array
+    {
+        return $this->_spec->validateGetErrors($userSpecData);
+    }
+
+    public function validate($userSpecData): bool
+    {
+        return count($this->validateGetErrors($userSpecData)) === 0;
     }
 }

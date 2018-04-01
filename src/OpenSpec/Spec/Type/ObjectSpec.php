@@ -126,7 +126,7 @@ class ObjectSpec extends TypeSpec
         $errors = [];
 
         if (!is_array($value)) {
-            $errors[] = [ParseSpecException::CODE_ARRAY_EXPECTED, "Expected map-array as value for object spec."];
+            $errors[] = [ParseSpecException::CODE_ARRAY_EXPECTED, "Expected map-array as value for object spec, but " . gettype($value) . " given."];
             return $errors;
         }
 
@@ -135,8 +135,8 @@ class ObjectSpec extends TypeSpec
         // Check for required fields
         $missingRequiredFields = array_diff($this->_requiredFields, array_keys($value));
         if (count($missingRequiredFields) > 0) {
-            // @todo Specify the missing required fields in the error message.
-            $errors[] = [ParseSpecException::CODE_MISSING_REQUIRED_FIELD, "Missing required field(s)."];
+            $missingRequiredMetakeysStr = '\'' . implode('\', \'', $missingRequiredFields) . '\'';
+            $errors[] = [ParseSpecException::CODE_MISSING_REQUIRED_FIELD, "Missing required field(s) $missingRequiredMetakeysStr in object spec."];
             return $errors;
         }
 
@@ -147,7 +147,8 @@ class ObjectSpec extends TypeSpec
                 return false;
             }*/
 
-            $fieldHasSpec = in_array($fieldKey, $specFieldKeys);
+            // @todo check all library to use in_array with strict comparison
+            $fieldHasSpec = in_array($fieldKey, $specFieldKeys, true);
 
             if (!$fieldHasSpec && !$this->_extensible) {
                 $errors[] = [ParseSpecException::CODE_UNEXPECTED_FIELDS, "Unexpected field '$fieldKey' in value for object spec."];
@@ -160,9 +161,13 @@ class ObjectSpec extends TypeSpec
                 $fieldSpec = $this->_extensionFieldsSpec;
             }
 
-            if ($fieldSpec !== null && !$fieldSpec->validate($fieldValue)) {
-                $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Field '$fieldKey' in object does not follow the spec."];
-                return $errors;
+            if ($fieldSpec !== null) {
+                $fieldErrors = $fieldSpec->validateGetErrors($fieldValue);
+                if (count($fieldErrors) > 0) {
+                    $msg = '- ' . implode(PHP_EOL . '- ', array_column($fieldErrors, 1));
+                    $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Field '$fieldKey' in object does not follow the spec." . PHP_EOL . $msg];
+                    return $errors;
+                }
             }
         }
 
