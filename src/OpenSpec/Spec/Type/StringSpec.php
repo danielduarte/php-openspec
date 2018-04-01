@@ -27,7 +27,7 @@ class StringSpec extends TypeSpec
         $errors = [];
 
         if (!is_string($value)) {
-            $errors[] = [ParseSpecException::CODE_STRING_EXPECTED, "Expected string value for 'string' type spec."];
+            $errors[] = [ParseSpecException::CODE_STRING_EXPECTED, "Expected string value for 'string' type spec, but " . gettype($value) . " given."];
         }
 
         return $errors;

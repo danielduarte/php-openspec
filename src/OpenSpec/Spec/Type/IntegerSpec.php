@@ -5,11 +5,11 @@ namespace OpenSpec\Spec\Type;
 use OpenSpec\ParseSpecException;
 
 
-class NullSpec extends TypeSpec
+class IntegerSpec extends TypeSpec
 {
     public function getTypeName(): string
     {
-        return 'null';
+        return 'integer';
     }
 
     public function getRequiredFields(): array
@@ -26,8 +26,8 @@ class NullSpec extends TypeSpec
     {
         $errors = [];
 
-        if ($value !== null) {
-            $errors[] = [ParseSpecException::CODE_NULL_EXPECTED, "Expected null value for 'null' type spec, but " . gettype($value) . " given."];
+        if (!is_int($value)) {
+            $errors[] = [ParseSpecException::CODE_INTEGER_EXPECTED, "Expected integer value for 'integer' type spec, but " . gettype($value) . " given."];
         }
 
         return $errors;

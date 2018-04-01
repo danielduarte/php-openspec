@@ -59,8 +59,10 @@ class ArraySpec extends TypeSpec
                 return $errors;
             }
 
-            if (!$this->_itemsSpec->validate($item)) {
-                $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Array item with index $index does not follow the spec."];
+            $itemErrors = $this->_itemsSpec->validateGetErrors($item);
+            if (count($itemErrors) > 0) {
+                $msg = '- ' . implode(PHP_EOL . '- ', array_column($itemErrors, 1));
+                $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Array item with index $index does not follow the spec." . PHP_EOL . $msg];
                 return $errors;
             }
 

@@ -41,6 +41,8 @@ class SpecBuilder
             'null'    => '\OpenSpec\Spec\Type\NullSpec',
             'boolean' => '\OpenSpec\Spec\Type\BooleanSpec',
             'string'  => '\OpenSpec\Spec\Type\StringSpec',
+            'integer' => '\OpenSpec\Spec\Type\IntegerSpec',
+            'float'   => '\OpenSpec\Spec\Type\FloatSpec',
             'object'  => '\OpenSpec\Spec\Type\ObjectSpec',
             'array'   => '\OpenSpec\Spec\Type\ArraySpec',
             'mixed'   => '\OpenSpec\Spec\Type\MixedSpec',
