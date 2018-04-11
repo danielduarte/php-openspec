@@ -69,4 +69,24 @@ class OpenSpec implements Spec
     {
         return count($this->validateGetErrors($userSpecData)) === 0;
     }
+
+    public function getOpenspecVersion()
+    {
+        return $this->_openspecVersion;
+    }
+
+    public function getName()
+    {
+        return $this->_name;
+    }
+
+    public function getVersion()
+    {
+        return $this->_version;
+    }
+
+    public function getSpec()
+    {
+        return $this->_spec;
+    }
 }
