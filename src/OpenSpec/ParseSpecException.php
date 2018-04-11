@@ -3,26 +3,27 @@
 namespace OpenSpec;
 
 use RuntimeException;
+use Throwable;
 
 
 class ParseSpecException extends RuntimeException
 {
     const CODE_GENERAL_PARSER_ERROR   =  1;
     const CODE_MULTIPLE_PARSER_ERROR  =  2;
-    const CODE_STRING_EXPECTED        =  3;
-    const CODE_ARRAY_EXPECTED         =  4;
+    const CODE_INVALID_SPEC_DATA      =  7;
     const CODE_UNKNOWN_SPEC_TYPE      =  5;
     const CODE_INVALID_TYPE_NAME_TYPE =  6;
-    const CODE_INVALID_SPEC_DATA      =  7;
-    const CODE_MISSING_REQUIRED_FIELD =  8;
     const CODE_UNEXPECTED_FIELDS      =  9;
+    const CODE_MISSING_REQUIRED_FIELD =  8;
     const CODE_INVALID_TYPE_NAME      = 10;
     const CODE_EXTENSIBLE_EXPECTED    = 11;
+    const CODE_UNDEFINED_NAMED_SPEC   = 14;
     const CODE_NULL_EXPECTED          = 12;
     const CODE_BOOLEAN_EXPECTED       = 13;
-    const CODE_UNDEFINED_NAMED_SPEC   = 14;
     const CODE_INTEGER_EXPECTED       = 15;
     const CODE_FLOAT_EXPECTED         = 16;
+    const CODE_STRING_EXPECTED        =  3;
+    const CODE_ARRAY_EXPECTED         =  4;
 
     protected $_errors;
 
@@ -49,6 +50,6 @@ class ParseSpecException extends RuntimeException
     {
         $errorCodes = array_column($this->_errors, 0);
 
-        return in_array($code, $errorCodes);
+        return in_array($code, $errorCodes, true);
     }
 }

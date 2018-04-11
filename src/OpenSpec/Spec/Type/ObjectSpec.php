@@ -42,12 +42,6 @@ class ObjectSpec extends TypeSpec
 
         $expectedIndex = 0;
         foreach ($fieldValue as $fieldKey => $fieldSpecData) {
-            // Commented because PHP array indexes that are string representing numbers such as '1234' are converted automatically to integer values like 1234.
-            /*if (!is_string($fieldKey)) {
-                $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Field key must be a string, but integer given."];
-                continue;
-            }*/
-
             try {
                 $this->_fieldSpecs[$fieldKey] = SpecBuilder::getInstance()->build($fieldSpecData);
             } catch (ParseSpecException $ex) {
@@ -142,12 +136,6 @@ class ObjectSpec extends TypeSpec
 
         // Check that values follow the field specs
         foreach ($value as $fieldKey => $fieldValue) {
-            // Commented because PHP array indexes that are string representing numbers such as '1234' are converted automatically to integer values like 1234.
-            /*if (!is_string($fieldKey)) {
-                return false;
-            }*/
-
-            // @todo check all library to use in_array with strict comparison
             $fieldHasSpec = in_array($fieldKey, $specFieldKeys, true);
 
             if (!$fieldHasSpec && !$this->_extensible) {
