@@ -2,7 +2,7 @@
 
 namespace OpenSpec;
 
-use OpenSpec\Spec\Type\TypeSpec;
+use OpenSpec\Spec\Spec;
 
 
 class SpecLibrary
@@ -29,7 +29,7 @@ class SpecLibrary
         return array_key_exists($name, $this->_specs);
     }
 
-    public function registerSpec(string $name, TypeSpec $spec): SpecLibrary
+    public function registerSpec(string $name, Spec $spec): SpecLibrary
     {
         if ($this->hasSpec($name)) {
             throw new SpecLibraryException();
@@ -70,7 +70,7 @@ class SpecLibrary
         $this->_specs = [];
     }
 
-    public function getSpec($name)
+    public function getSpec($name): Spec
     {
         if (!$this->hasSpec($name)) {
             throw new SpecLibraryException();

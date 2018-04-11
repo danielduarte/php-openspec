@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\ParseSpecException;
-use OpenSpec\Spec\Spec;
+use OpenSpec\Spec\OpenSpec;
 
 
 final class SpecParsingTest extends TestCase
@@ -17,7 +17,7 @@ final class SpecParsingTest extends TestCase
         ];
 
         try {
-            new Spec($specData);
+            new OpenSpec($specData);
             $errorMsg = null;
         } catch (ParseSpecException $ex) {
             $errorMsg = $ex->getMessage();
@@ -36,7 +36,7 @@ final class SpecParsingTest extends TestCase
 
         $exception = null;
         try {
-            new Spec($specData);
+            new OpenSpec($specData);
         } catch (ParseSpecException $ex) {
             $exception = $ex;
         }

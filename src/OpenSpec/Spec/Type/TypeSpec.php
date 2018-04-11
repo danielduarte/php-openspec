@@ -3,9 +3,10 @@
 namespace OpenSpec\Spec\Type;
 
 use OpenSpec\ParseSpecException;
+use OpenSpec\Spec\Spec;
 
 
-abstract class TypeSpec
+abstract class TypeSpec implements Spec
 {
     public function __construct(array $specData)
     {
@@ -21,8 +22,6 @@ abstract class TypeSpec
     public abstract function getRequiredFields(): array;
 
     public abstract function getOptionalFields(): array;
-
-    public abstract function validateGetErrors($value): array;
 
     public function validate($value): bool
     {
