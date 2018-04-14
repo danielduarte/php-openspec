@@ -2,9 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
-use OpenSpec\Spec\Type\FloatSpec;
 use OpenSpec\Spec\Type\TypeSpec;
-use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 final class FloatValidationTest extends TestCase
@@ -12,7 +11,7 @@ final class FloatValidationTest extends TestCase
     protected function getSpecInstance(): TypeSpec
     {
         $specData = ['type' => 'float'];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         return $spec;
     }

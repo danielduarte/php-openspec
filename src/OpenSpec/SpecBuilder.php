@@ -22,7 +22,7 @@ class SpecBuilder
         return static::$_instance;
     }
 
-    public function build($specData): TypeSpec
+    public function build($specData, SpecLibrary $library): TypeSpec
     {
         if (!is_array($specData)) {
             throw new ParseSpecException('Expected array as spec data, but ' . gettype($specData) . ' given.', ParseSpecException::CODE_ARRAY_EXPECTED);
@@ -55,6 +55,6 @@ class SpecBuilder
 
         $specClassName = $classMap[$type];
 
-        return new $specClassName($specData);
+        return new $specClassName($specData, $library);
     }
 }

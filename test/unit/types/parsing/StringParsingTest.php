@@ -5,6 +5,7 @@ use OpenSpec\SpecBuilder;
 use OpenSpec\Spec\Type\StringSpec;
 use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 final class StringParsingTest extends TestCase
@@ -12,7 +13,7 @@ final class StringParsingTest extends TestCase
     protected function getSpecInstance(): TypeSpec
     {
         $specData = ['type' => 'string'];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         return $spec;
     }
@@ -74,7 +75,7 @@ final class StringParsingTest extends TestCase
 
         $exception = null;
         try {
-            SpecBuilder::getInstance()->build($specData);
+            SpecBuilder::getInstance()->build($specData, new SpecLibrary());
         } catch (ParseSpecException $ex) {
             $exception = $ex;
         }

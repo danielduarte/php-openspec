@@ -30,7 +30,7 @@ class ArraySpec extends TypeSpec
         $errors = [];
 
         try {
-            $this->_itemsSpec = SpecBuilder::getInstance()->build($fieldValue);
+            $this->_itemsSpec = SpecBuilder::getInstance()->build($fieldValue, $this->_library);
         } catch (ParseSpecException $ex) {
             $errors = $ex->getErrors();
         }

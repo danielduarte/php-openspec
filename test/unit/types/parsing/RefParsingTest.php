@@ -5,6 +5,7 @@ use OpenSpec\SpecBuilder;
 use OpenSpec\Spec\Type\RefSpec;
 use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 final class RefParsingTest extends TestCase
@@ -12,7 +13,7 @@ final class RefParsingTest extends TestCase
     protected function getSpecInstance(): TypeSpec
     {
         $specData = ['type' => 'ref', 'spec' => 'Link'];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         return $spec;
     }
@@ -74,7 +75,7 @@ final class RefParsingTest extends TestCase
 
         $exception = null;
         try {
-            SpecBuilder::getInstance()->build($specData);
+            SpecBuilder::getInstance()->build($specData, new SpecLibrary());
         } catch (ParseSpecException $ex) {
             $exception = $ex;
         }

@@ -41,7 +41,7 @@ class MixedSpec extends TypeSpec
             }
 
             try {
-                $this->_optionsSpec[] = SpecBuilder::getInstance()->build($optionSpecData);
+                $this->_optionsSpec[] = SpecBuilder::getInstance()->build($optionSpecData, $this->_library);
             } catch (ParseSpecException $ex) {
                 $optionErrors = $ex->getErrors();
                 $errors = array_merge($errors, $optionErrors);

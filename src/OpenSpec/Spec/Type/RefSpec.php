@@ -45,13 +45,11 @@ class RefSpec extends TypeSpec
     {
         $errors = [];
 
-        $library = SpecLibrary::getInstance();
-
-        if (!$library->hasSpec($this->_specName)) {
+        if (!$this->_library->hasSpec($this->_specName)) {
             $errors[] = [ParseSpecException::CODE_UNDEFINED_NAMED_SPEC, "Undefined named spec '" . $this->_specName . "'."];
             return $errors;
         }
 
-        return $library->validateValueGetErrors($this->_specName, $value);
+        return $this->_library->validateValueGetErrors($this->_specName, $value);
     }
 }

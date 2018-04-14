@@ -3,6 +3,7 @@
 namespace OpenSpec\Spec\Type;
 
 use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 class StringSpec extends TypeSpec

@@ -5,6 +5,7 @@ use OpenSpec\SpecBuilder;
 use OpenSpec\Spec\Type\BooleanSpec;
 use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 final class BooleanParsingTest extends TestCase
@@ -12,7 +13,7 @@ final class BooleanParsingTest extends TestCase
     protected function getSpecInstance(): TypeSpec
     {
         $specData = ['type' => 'boolean'];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         return $spec;
     }
@@ -73,7 +74,7 @@ final class BooleanParsingTest extends TestCase
 
         $exception = null;
         try {
-            SpecBuilder::getInstance()->build($specData);
+            SpecBuilder::getInstance()->build($specData, new SpecLibrary());
         } catch (ParseSpecException $ex) {
             $exception = $ex;
         }

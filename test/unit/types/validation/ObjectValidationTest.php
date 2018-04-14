@@ -2,9 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
-use OpenSpec\Spec\Type\StringSpec;
 use OpenSpec\Spec\Type\TypeSpec;
-use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 final class ObjectValidationTest extends TestCase
@@ -18,7 +17,7 @@ final class ObjectValidationTest extends TestCase
                 'happy' => ['type' => 'boolean'],
             ]
         ];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         return $spec;
     }
@@ -84,7 +83,7 @@ final class ObjectValidationTest extends TestCase
             'new-field-3' => 'something',
         ];
 
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         $result = $spec->validate($value);
         $this->assertTrue($result, "Given value not recognized by the spec, even when it should.");
@@ -100,7 +99,7 @@ final class ObjectValidationTest extends TestCase
                 '400'   => ['type' => 'boolean'],
             ]
         ];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         $value =  [
             '200'   => true,
@@ -122,7 +121,7 @@ final class ObjectValidationTest extends TestCase
                 'field2' => ['type' => 'null']
             ]
         ];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         $value =  [];
 
@@ -134,7 +133,7 @@ final class ObjectValidationTest extends TestCase
     public function testEmptyObjectValue()
     {
         $specData = ['type'  => 'object'];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         $value =  [];
 
@@ -146,7 +145,7 @@ final class ObjectValidationTest extends TestCase
     public function testObjectValueWithNoFieldSpecs()
     {
         $specData = ['type'  => 'object', 'extensible' => true];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         $value =  [
             'field1' => true,

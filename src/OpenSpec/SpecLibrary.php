@@ -7,22 +7,7 @@ use OpenSpec\Spec\Spec;
 
 class SpecLibrary
 {
-    private static $_instance = null;
-
     private $_specs = [];
-
-    private function __construct()
-    {
-    }
-
-    public static function getInstance(): SpecLibrary
-    {
-        if (static::$_instance === null) {
-            static::$_instance = new SpecLibrary();
-        }
-
-        return static::$_instance;
-    }
 
     public function hasSpec(string $name): bool
     {
@@ -42,7 +27,7 @@ class SpecLibrary
 
     public function registerSpecFromData(string $name, array $specData): SpecLibrary
     {
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, $this);
 
         return $this->registerSpec($name, $spec);
     }

@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
 use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 final class GeneralParsingTest extends TestCase
@@ -14,7 +15,7 @@ final class GeneralParsingTest extends TestCase
 
         $specData = 123456;
 
-        SpecBuilder::getInstance()->build($specData);
+        SpecBuilder::getInstance()->build($specData, new SpecLibrary());
     }
 
     public function testParseInvalidTypeOfTypeSpecError()
@@ -24,7 +25,7 @@ final class GeneralParsingTest extends TestCase
 
         $specData = ['type' => true];
 
-        SpecBuilder::getInstance()->build($specData);
+        SpecBuilder::getInstance()->build($specData, new SpecLibrary());
     }
 
     public function testParseUnknownTypeSpecError()
@@ -34,6 +35,6 @@ final class GeneralParsingTest extends TestCase
 
         $specData = ['type' => 'any_weird_string'];
 
-        SpecBuilder::getInstance()->build($specData);
+        SpecBuilder::getInstance()->build($specData, new SpecLibrary());
     }
 }

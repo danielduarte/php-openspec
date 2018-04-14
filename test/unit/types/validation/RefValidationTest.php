@@ -10,13 +10,14 @@ final class RefValidationTest extends TestCase
 {
     protected function getSpecInstance(): TypeSpec
     {
+        $library = new SpecLibrary();
+
         $refSpecData = [
             'type' => 'ref',
             'spec' => 'Link'
         ];
-        $refSpec = SpecBuilder::getInstance()->build($refSpecData);
+        $refSpec = SpecBuilder::getInstance()->build($refSpecData, $library);
 
-        $library = SpecLibrary::getInstance();
         if (!$library->hasSpec('Link')) {
             $specData = [
                 'type'   => 'object',

@@ -2,9 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
-use OpenSpec\Spec\Type\StringSpec;
 use OpenSpec\Spec\Type\TypeSpec;
-use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 final class MixedValidationTest extends TestCase
@@ -18,7 +17,7 @@ final class MixedValidationTest extends TestCase
                 ['type' => 'boolean']
             ]
         ];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         return $spec;
     }

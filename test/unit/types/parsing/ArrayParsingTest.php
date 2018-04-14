@@ -5,6 +5,7 @@ use OpenSpec\SpecBuilder;
 use OpenSpec\Spec\Type\ArraySpec;
 use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 final class ArrayParsingTest extends TestCase
@@ -16,7 +17,7 @@ final class ArrayParsingTest extends TestCase
             'items' => ['type' => 'string']
         ];
 
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         return $spec;
     }
@@ -78,7 +79,7 @@ final class ArrayParsingTest extends TestCase
 
         $exception = null;
         try {
-            SpecBuilder::getInstance()->build($specData);
+            SpecBuilder::getInstance()->build($specData, new SpecLibrary());
         } catch (ParseSpecException $ex) {
             $exception = $ex;
         }
@@ -92,7 +93,7 @@ final class ArrayParsingTest extends TestCase
 
         $exception = null;
         try {
-            SpecBuilder::getInstance()->build($specData);
+            SpecBuilder::getInstance()->build($specData, new SpecLibrary());
         } catch (ParseSpecException $ex) {
             $exception = $ex;
         }
@@ -105,7 +106,7 @@ final class ArrayParsingTest extends TestCase
         $specData = ['type' => 'array'];
 
         try {
-            SpecBuilder::getInstance()->build($specData);
+            SpecBuilder::getInstance()->build($specData, new SpecLibrary());
             $errors = [];
         } catch (ParseSpecException $ex) {
             $errors = $ex->getErrors();

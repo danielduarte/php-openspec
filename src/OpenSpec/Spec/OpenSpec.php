@@ -17,8 +17,12 @@ class OpenSpec implements Spec
 
     protected $_spec = null;
 
+    protected $_library = null;
+
     public function __construct(array $specData)
     {
+        $this->_library = new SpecLibrary();
+
         $errors = $this->_validateSpecData($specData);
         if (count($errors) > 0) {
             throw new ParseSpecException('Invalid spec data.', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
@@ -28,7 +32,10 @@ class OpenSpec implements Spec
         $this->_openspecVersion = $specData['openspec'];
         $this->_name            = $specData['name'];
         $this->_version         = array_key_exists('version', $specData) ? $specData['version'] : null;
-        $this->_spec            = SpecBuilder::getInstance()->build($specData['spec']);
+        $this->_spec            = SpecBuilder::getInstance()->build($specData['spec'], $this->_library);
+
+        // @todo make sure this registration should happen
+        $this->_library->registerSpec($this->_name, $this);
 
         if (array_key_exists('definitions', $specData)) {
             $this->_parseDefinitions($specData['definitions']);
@@ -50,13 +57,13 @@ class OpenSpec implements Spec
                 'definitions' => ['type' => 'object', 'extensible' => true],
             ],
             'requiredFields' => ['openspec', 'name', 'spec']
-        ])->validateGetErrors($specData);
+        ], $this->_library)->validateGetErrors($specData);
     }
 
     protected function _parseDefinitions($definitionsData): void
     {
         foreach ($definitionsData as $defName => $defSpec) {
-            SpecLibrary::getInstance()->registerSpecFromData($defName, $defSpec);
+            $this->_library->registerSpecFromData($defName, $defSpec);
         }
     }
 
@@ -88,5 +95,10 @@ class OpenSpec implements Spec
     public function getSpec()
     {
         return $this->_spec;
+    }
+
+    public function getSpecLibrary(): SpecLibrary
+    {
+        return $this->_library;
     }
 }

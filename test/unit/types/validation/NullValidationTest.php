@@ -5,6 +5,7 @@ use OpenSpec\SpecBuilder;
 use OpenSpec\Spec\Type\NullSpec;
 use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 final class NullValidationTest extends TestCase
@@ -12,7 +13,7 @@ final class NullValidationTest extends TestCase
     protected function getSpecInstance(): TypeSpec
     {
         $specData = ['type' => 'null'];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         return $spec;
     }

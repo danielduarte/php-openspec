@@ -17,21 +17,11 @@ final class SpecLibraryTest extends TestCase
         new $className();
     }
 
-    public function testSpecBuilderIsSingleton(): void
-    {
-        $library1 = SpecLibrary::getInstance();
-        $library2 = SpecLibrary::getInstance();
-
-        $this->assertInstanceOf(SpecLibrary::class, $library1);
-
-        $this->assertTrue($library1 === $library2, 'Spec Library is not a singleton since more than one instance could be created.');
-    }
-
     public function testRegisterSpec()
     {
-        $library = SpecLibrary::getInstance();
+        $library = new SpecLibrary();
         $specName = 'TestSpec';
-        $spec = SpecBuilder::getInstance()->build(['type' => 'string']);
+        $spec = SpecBuilder::getInstance()->build(['type' => 'string'], $library);
 
         $this->assertTrue(!$library->hasSpec($specName));
 
@@ -44,9 +34,9 @@ final class SpecLibraryTest extends TestCase
     {
         $this->expectException(SpecLibraryException::class);
 
-        $library = SpecLibrary::getInstance();
+        $library = new SpecLibrary();
         $specName = 'TestSpec';
-        $spec = SpecBuilder::getInstance()->build(['type' => 'string']);
+        $spec = SpecBuilder::getInstance()->build(['type' => 'string'], $library);
 
         $library->registerSpec($specName, $spec);
         $library->registerSpec($specName, $spec);
@@ -54,7 +44,7 @@ final class SpecLibraryTest extends TestCase
 
     public function testRegisterSpecFromData()
     {
-        $library = SpecLibrary::getInstance();
+        $library = new SpecLibrary();
         $specName = 'TestSpecFromData';
         $specData = ['type' => 'string'];
 
@@ -69,7 +59,7 @@ final class SpecLibraryTest extends TestCase
     {
         $this->expectException(ParseSpecException::class);
 
-        $library = SpecLibrary::getInstance();
+        $library = new SpecLibrary();
         $specName = 'TestInvalidSpecFromData';
         $specData = ['type' => 'hello'];
 
@@ -80,9 +70,9 @@ final class SpecLibraryTest extends TestCase
 
     public function testUnregisterSpec()
     {
-        $library = SpecLibrary::getInstance();
+        $library = new SpecLibrary();
         $specName = 'TestSpecToUnregister';
-        $spec = SpecBuilder::getInstance()->build(['type' => 'string']);
+        $spec = SpecBuilder::getInstance()->build(['type' => 'string'], $library);
 
         $library->registerSpec($specName, $spec);
         $library->unregisterSpec($specName);
@@ -94,7 +84,7 @@ final class SpecLibraryTest extends TestCase
     {
         $this->expectException(SpecLibraryException::class);
 
-        $library = SpecLibrary::getInstance();
+        $library = new SpecLibrary();
         $specName = 'TestUnregisteredSpec';
 
         $library->unregisterSpec($specName);
@@ -102,9 +92,9 @@ final class SpecLibraryTest extends TestCase
 
     public function testReturnUnregisteredSpec()
     {
-        $library = SpecLibrary::getInstance();
+        $library = new SpecLibrary();
         $specName = 'TestSpecToUnregisterAndReturn';
-        $spec = SpecBuilder::getInstance()->build(['type' => 'string']);
+        $spec = SpecBuilder::getInstance()->build(['type' => 'string'], $library);
 
         $library->registerSpec($specName, $spec);
         $unregisteredSpec = $library->unregisterSpec($specName);
@@ -114,7 +104,7 @@ final class SpecLibraryTest extends TestCase
 
     public function testUnregisterAllSpecs()
     {
-        $library = SpecLibrary::getInstance();
+        $library = new SpecLibrary();
 
         $library->registerSpecFromData('Spec1', ['type' => 'string']);
         $library->registerSpecFromData('Spec2', ['type' => 'string']);

@@ -43,7 +43,7 @@ class ObjectSpec extends TypeSpec
         $expectedIndex = 0;
         foreach ($fieldValue as $fieldKey => $fieldSpecData) {
             try {
-                $this->_fieldSpecs[$fieldKey] = SpecBuilder::getInstance()->build($fieldSpecData);
+                $this->_fieldSpecs[$fieldKey] = SpecBuilder::getInstance()->build($fieldSpecData, $this->_library);
             } catch (ParseSpecException $ex) {
                 $fieldErrors = $ex->getErrors();
                 $errors = array_merge($errors, $fieldErrors);
@@ -79,7 +79,7 @@ class ObjectSpec extends TypeSpec
         }
 
         try {
-            $this->_extensionFieldsSpec = SpecBuilder::getInstance()->build($fieldValue);
+            $this->_extensionFieldsSpec = SpecBuilder::getInstance()->build($fieldValue, $this->_library);
         } catch (ParseSpecException $ex) {
             $errors = $ex->getErrors();
         }

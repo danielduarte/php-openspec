@@ -4,12 +4,17 @@ namespace OpenSpec\Spec\Type;
 
 use OpenSpec\ParseSpecException;
 use OpenSpec\Spec\Spec;
+use OpenSpec\SpecLibrary;
 
 
 abstract class TypeSpec implements Spec
 {
-    public function __construct(array $specData)
+    protected $_library = null;
+
+    public function __construct(array $specData, SpecLibrary $library)
     {
+        $this->_library = $library;
+
         $errors = $this->_validateSpecData($specData);
 
         if (count($errors) > 0) {
@@ -22,6 +27,11 @@ abstract class TypeSpec implements Spec
     public abstract function getRequiredFields(): array;
 
     public abstract function getOptionalFields(): array;
+
+    public function getSpecLibrary(): SpecLibrary
+    {
+        return $this->_library;
+    }
 
     public function validate($value): bool
     {

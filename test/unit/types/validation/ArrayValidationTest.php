@@ -2,9 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
-use OpenSpec\Spec\Type\StringSpec;
 use OpenSpec\Spec\Type\TypeSpec;
-use OpenSpec\ParseSpecException;
+use OpenSpec\SpecLibrary;
 
 
 final class ArrayValidationTest extends TestCase
@@ -15,7 +14,7 @@ final class ArrayValidationTest extends TestCase
             'type'  => 'array',
             'items' => ['type' => 'string']
         ];
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
 
         return $spec;
     }
@@ -74,7 +73,7 @@ final class ArrayValidationTest extends TestCase
             ['other', 'another one']
         ];
 
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
         $result = $spec->validate($value);
 
         $this->assertTrue($result, "Not validated array of arrays of string|boolean.");
@@ -118,7 +117,7 @@ final class ArrayValidationTest extends TestCase
             'comments' => ''
         ];
 
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
         $result = $spec->validate($value);
 
         $this->assertTrue($result, "Not validated person info.");
@@ -135,7 +134,7 @@ final class ArrayValidationTest extends TestCase
             [[], ['field' => 'value'], [null, false, "hi!"]], // Array of arrays (bidimensional array / matrix)
         ];
 
-        $spec = SpecBuilder::getInstance()->build($specData);
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
         foreach ($values as $value) {
             $result = $spec->validate($value);
             $this->assertTrue($result, "Not validated array.");
