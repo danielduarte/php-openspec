@@ -41,15 +41,15 @@ class RefSpec extends TypeSpec
         return $errors;
     }
 
-    public function validateGetErrors($value): array
+    public function parse($value)
     {
         $errors = [];
 
         if (!$this->_library->hasSpec($this->_specName)) {
             $errors[] = [ParseSpecException::CODE_UNDEFINED_NAMED_SPEC, "Undefined named spec '" . $this->_specName . "'."];
-            return $errors;
+            throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
         }
 
-        return $this->_library->validateValueGetErrors($this->_specName, $value);
+        return $this->_library->getSpec($this->_specName)->parse($value);
     }
 }

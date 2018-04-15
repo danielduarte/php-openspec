@@ -3,6 +3,15 @@
 namespace OpenSpec;
 
 use OpenSpec\Spec\Type\TypeSpec;
+use OpenSpec\Spec\Type\NullSpec;
+use OpenSpec\Spec\Type\BooleanSpec;
+use OpenSpec\Spec\Type\StringSpec;
+use OpenSpec\Spec\Type\IntegerSpec;
+use OpenSpec\Spec\Type\FloatSpec;
+use OpenSpec\Spec\Type\ObjectSpec;
+use OpenSpec\Spec\Type\ArraySpec;
+use OpenSpec\Spec\Type\MixedSpec;
+use OpenSpec\Spec\Type\RefSpec;
 
 
 class SpecBuilder
@@ -38,15 +47,15 @@ class SpecBuilder
         }
 
         $classMap = [
-            'null'    => '\OpenSpec\Spec\Type\NullSpec',
-            'boolean' => '\OpenSpec\Spec\Type\BooleanSpec',
-            'string'  => '\OpenSpec\Spec\Type\StringSpec',
-            'integer' => '\OpenSpec\Spec\Type\IntegerSpec',
-            'float'   => '\OpenSpec\Spec\Type\FloatSpec',
-            'object'  => '\OpenSpec\Spec\Type\ObjectSpec',
-            'array'   => '\OpenSpec\Spec\Type\ArraySpec',
-            'mixed'   => '\OpenSpec\Spec\Type\MixedSpec',
-            'ref'     => '\OpenSpec\Spec\Type\RefSpec',
+            'null'    => NullSpec::class,
+            'boolean' => BooleanSpec::class,
+            'string'  => StringSpec::class,
+            'integer' => IntegerSpec::class,
+            'float'   => FloatSpec::class,
+            'object'  => ObjectSpec::class,
+            'array'   => ArraySpec::class,
+            'mixed'   => MixedSpec::class,
+            'ref'     => RefSpec::class,
         ];
 
         if (!array_key_exists($type, $classMap)) {

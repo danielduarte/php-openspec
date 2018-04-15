@@ -53,18 +53,19 @@ class MixedSpec extends TypeSpec
         return $errors;
     }
 
-    public function validateGetErrors($value): array
+    public function parse($value)
     {
         $errors = [];
 
         foreach ($this->_optionsSpec as $optionSpec) {
-            if ($optionSpec->validate($value)) {
-                return $errors;
+            try {
+                return $optionSpec->parse($value);
+            } catch (ParseSpecException $ex) {
+                // Continue with next option
             }
         }
 
         $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Value for 'mixed' spec does not follow any of the options."];
-
-        return $errors;
+        throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
     }
 }

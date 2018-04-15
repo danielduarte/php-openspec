@@ -38,38 +38,44 @@ class ArraySpec extends TypeSpec
         return $errors;
     }
 
-    public function validateGetErrors($value): array
+    public function parse($value)
     {
+        $parsedValue = [];
+
         $errors = [];
 
         if (!is_array($value)) {
             $errors[] = [ParseSpecException::CODE_ARRAY_EXPECTED, "Array expected as value of 'array' spec, but " . gettype($value) . " given."];
-            return $errors;
+            throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
         }
 
-        if ($this->_itemsSpec === null) {
-            // No errors
-            return $errors;
+        if ($this->_itemsSpec !== null) {
+            $itemSpec = $this->_itemsSpec;
+        } else {
+            $itemSpec = $this->_getAnySpec();
         }
 
         $expectedIndex = 0;
         foreach ($value as $index => $item) {
             if ($expectedIndex !== $index) {
                 $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Index in value of 'array' spec expected to be integer and consecutive."];
-                return $errors;
+                throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
             }
 
-            $itemErrors = $this->_itemsSpec->validateGetErrors($item);
-            if (count($itemErrors) > 0) {
+            try {
+                $parsedValue[] = $itemSpec->parse($item);
+            } catch (ParseSpecException $ex) {
+                $itemErrors = $ex->getErrors();
+
                 $msg = '- ' . implode(PHP_EOL . '- ', array_column($itemErrors, 1));
                 $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Array item with index $index does not follow the spec." . PHP_EOL . $msg];
-                return $errors;
+                throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
             }
 
             $expectedIndex++;
         }
 
         // No errors
-        return $errors;
+        return $parsedValue;
     }
 }

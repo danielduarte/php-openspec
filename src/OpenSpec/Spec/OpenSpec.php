@@ -7,7 +7,7 @@ use OpenSpec\ParseSpecException;
 use OpenSpec\SpecLibrary;
 
 
-class OpenSpec implements Spec
+class OpenSpec extends Spec
 {
     protected $_openspecVersion = null;
 
@@ -16,8 +16,6 @@ class OpenSpec implements Spec
     protected $_version = null;
 
     protected $_spec = null;
-
-    protected $_library = null;
 
     public function __construct(array $specData)
     {
@@ -47,17 +45,23 @@ class OpenSpec implements Spec
     protected function _validateSpecData($specData): array
     {
         // Validate metamodel
-        return SpecBuilder::getInstance()->build([
-            'type'   => 'object',
-            'fields' => [
-                'openspec'    => ['type' => 'string'],
-                'name'        => ['type' => 'string'],
-                'version'     => ['type' => 'string'],
-                'spec'        => ['type' => 'object', 'extensible' => true],
-                'definitions' => ['type' => 'object', 'extensible' => true],
-            ],
-            'requiredFields' => ['openspec', 'name', 'spec']
-        ], $this->_library)->validateGetErrors($specData);
+        try {
+            SpecBuilder::getInstance()->build([
+                'type' => 'object',
+                'fields' => [
+                    'openspec' => ['type' => 'string'],
+                    'name' => ['type' => 'string'],
+                    'version' => ['type' => 'string'],
+                    'spec' => ['type' => 'object', 'extensible' => true],
+                    'definitions' => ['type' => 'object', 'extensible' => true],
+                ],
+                'requiredFields' => ['openspec', 'name', 'spec']
+            ], $this->_library)->parse($specData);
+        } catch (ParseSpecException $ex) {
+            return $ex->getErrors();
+        }
+
+        return [];
     }
 
     protected function _parseDefinitions($definitionsData): void
@@ -67,14 +71,9 @@ class OpenSpec implements Spec
         }
     }
 
-    public function validateGetErrors($userSpecData): array
+    public function parse($userSpecData)
     {
-        return $this->_spec->validateGetErrors($userSpecData);
-    }
-
-    public function validate($userSpecData): bool
-    {
-        return count($this->validateGetErrors($userSpecData)) === 0;
+        return $this->_spec->parse($userSpecData);
     }
 
     public function getOpenspecVersion()
@@ -95,10 +94,5 @@ class OpenSpec implements Spec
     public function getSpec()
     {
         return $this->_spec;
-    }
-
-    public function getSpecLibrary(): SpecLibrary
-    {
-        return $this->_library;
     }
 }

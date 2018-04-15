@@ -3,7 +3,6 @@
 namespace OpenSpec\Spec\Type;
 
 use OpenSpec\ParseSpecException;
-use OpenSpec\SpecLibrary;
 
 
 class StringSpec extends TypeSpec
@@ -23,14 +22,15 @@ class StringSpec extends TypeSpec
         return [];
     }
 
-    public function validateGetErrors($value): array
+    public function parse($value)
     {
         $errors = [];
 
         if (!is_string($value)) {
             $errors[] = [ParseSpecException::CODE_STRING_EXPECTED, "Expected string value for 'string' type spec, but " . gettype($value) . " given."];
+            throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
         }
 
-        return $errors;
+        return $value;
     }
 }

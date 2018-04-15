@@ -6,7 +6,7 @@ use OpenSpec\ParseSpecException;
 use OpenSpec\SpecLibrary;
 
 
-final class GeneralParsingTest extends TestCase
+final class GeneralTypeParsingTest extends TestCase
 {
     public function testParseInvalidDataSpecError()
     {

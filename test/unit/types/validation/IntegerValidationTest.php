@@ -4,6 +4,7 @@ use PHPUnit\Framework\TestCase;
 use OpenSpec\SpecBuilder;
 use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\SpecLibrary;
+use OpenSpec\ParseSpecException;
 
 
 final class IntegerValidationTest extends TestCase
@@ -32,7 +33,12 @@ final class IntegerValidationTest extends TestCase
         $spec  = $this->getSpecInstance();
         $value = $this->getValidValueInstance();
 
-        $errors = $spec->validateGetErrors($value);
+        $errors = [];
+        try {
+            $spec->parse($value);
+        } catch (ParseSpecException $ex) {
+            $errors = $ex->getErrors();
+        }
 
         $msg = '- ' . implode(PHP_EOL . '- ', array_column($errors, 1));
         $this->assertTrue(count($errors) === 0, "Given value not recognized by the spec, even when it should." . PHP_EOL . $msg);

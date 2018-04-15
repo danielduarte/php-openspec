@@ -2,14 +2,37 @@
 
 namespace OpenSpec\Spec;
 
+use OpenSpec\ParseSpecException;
 use OpenSpec\SpecLibrary;
 
 
-interface Spec
+abstract class Spec
 {
-    public function validateGetErrors($value): array;
+    protected $_library = null;
 
-    public function validate($value): bool;
+    public function getSpecLibrary(): SpecLibrary
+    {
+        return $this->_library;
+    }
 
-    public function getSpecLibrary(): SpecLibrary;
+    public function validate($value, bool $throwExceptionOnInvalid = false): bool
+    {
+        $errors = [];
+
+        try {
+
+            $this->parse($value);
+
+        } catch (ParseSpecException $ex) {
+            if ($throwExceptionOnInvalid) {
+                throw $ex;
+            }
+
+            $errors = $ex->getErrors();
+        }
+
+        return count($errors) === 0;
+    }
+
+    public abstract function parse($value);
 }

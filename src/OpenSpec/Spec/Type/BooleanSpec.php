@@ -22,14 +22,15 @@ class BooleanSpec extends TypeSpec
         return [];
     }
 
-    public function validateGetErrors($value): array
+    public function parse($value)
     {
         $errors = [];
 
         if (!is_bool($value)) {
             $errors[] = [ParseSpecException::CODE_BOOLEAN_EXPECTED, "Expected boolean value for 'boolean' type spec, but " . gettype($value) . " given."];
+            throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
         }
 
-        return $errors;
+        return $value;
     }
 }

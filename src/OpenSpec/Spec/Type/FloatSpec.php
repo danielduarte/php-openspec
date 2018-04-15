@@ -22,14 +22,15 @@ class FloatSpec extends TypeSpec
         return [];
     }
 
-    public function validateGetErrors($value): array
+    public function parse($value)
     {
         $errors = [];
 
         if (!is_float($value)) {
             $errors[] = [ParseSpecException::CODE_FLOAT_EXPECTED, "Expected float value for 'float' type spec, but " . gettype($value) . " given."];
+            throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
         }
 
-        return $errors;
+        return $value;
     }
 }

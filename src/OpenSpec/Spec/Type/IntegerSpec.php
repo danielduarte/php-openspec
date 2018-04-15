@@ -22,14 +22,15 @@ class IntegerSpec extends TypeSpec
         return [];
     }
 
-    public function validateGetErrors($value): array
+    public function parse($value)
     {
         $errors = [];
 
         if (!is_int($value)) {
             $errors[] = [ParseSpecException::CODE_INTEGER_EXPECTED, "Expected integer value for 'integer' type spec, but " . gettype($value) . " given."];
+            throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
         }
 
-        return $errors;
+        return $value;
     }
 }

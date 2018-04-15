@@ -4,6 +4,7 @@ namespace OpenSpec\Spec\Type;
 
 use OpenSpec\SpecBuilder;
 use OpenSpec\ParseSpecException;
+use OpenSpec\Entity;
 
 
 class ObjectSpec extends TypeSpec
@@ -29,6 +30,12 @@ class ObjectSpec extends TypeSpec
     public function getOptionalFields(): array
     {
         return ['fields', 'extensible', 'extensionFields', 'requiredFields'];
+    }
+
+    public function isValidFieldName(string $fieldName): bool
+    {
+        // @todo should the string $fieldName be checked to make sure it is a valid identifier?
+        return $this->_extensible || array_key_exists($fieldName, $this->_fieldSpecs);
     }
 
     protected function _validateFieldSpecData_fields($fieldValue): array
@@ -107,6 +114,8 @@ class ObjectSpec extends TypeSpec
                 continue;
             }
 
+            // Note that the required fields could not be part of the 'fields' meta field, since they can be extension fields without specification
+            // @todo check if required fields are in 'fields' in case the object is not extensible
             $this->_requiredFields[] = $fieldName;
 
             $expectedIndex++;
@@ -115,13 +124,15 @@ class ObjectSpec extends TypeSpec
         return $errors;
     }
 
-    public function validateGetErrors($value): array
+    public function parse($value)
     {
+        $parsedValue = [];
+
         $errors = [];
 
         if (!is_array($value)) {
             $errors[] = [ParseSpecException::CODE_ARRAY_EXPECTED, "Expected map-array as value for object spec, but " . gettype($value) . " given."];
-            return $errors;
+            throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
         }
 
         $specFieldKeys = array_keys($this->_fieldSpecs);
@@ -131,7 +142,7 @@ class ObjectSpec extends TypeSpec
         if (count($missingRequiredFields) > 0) {
             $missingRequiredMetakeysStr = '\'' . implode('\', \'', $missingRequiredFields) . '\'';
             $errors[] = [ParseSpecException::CODE_MISSING_REQUIRED_FIELD, "Missing required field(s) $missingRequiredMetakeysStr in object spec."];
-            return $errors;
+            throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
         }
 
         // Check that values follow the field specs
@@ -140,25 +151,19 @@ class ObjectSpec extends TypeSpec
 
             if (!$fieldHasSpec && !$this->_extensible) {
                 $errors[] = [ParseSpecException::CODE_UNEXPECTED_FIELDS, "Unexpected field '$fieldKey' in value for object spec."];
-                return $errors;
+                throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
             }
-
             if ($fieldHasSpec) {
                 $fieldSpec = $this->_fieldSpecs[$fieldKey];
-            } else {
+            } elseif ($this->_extensionFieldsSpec !== null) {
                 $fieldSpec = $this->_extensionFieldsSpec;
+            } else {
+                $fieldSpec = $this->_getAnySpec();
             }
 
-            if ($fieldSpec !== null) {
-                $fieldErrors = $fieldSpec->validateGetErrors($fieldValue);
-                if (count($fieldErrors) > 0) {
-                    $msg = '- ' . implode(PHP_EOL . '- ', array_column($fieldErrors, 1));
-                    $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Field '$fieldKey' in object does not follow the spec." . PHP_EOL . $msg];
-                    return $errors;
-                }
-            }
+                $parsedValue[$fieldKey] = $fieldSpec->parse($fieldValue);
         }
 
-        return $errors;
+        return new Entity($this, $parsedValue);
     }
 }

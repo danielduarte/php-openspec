@@ -73,6 +73,12 @@ class SpecLibrary
 
     public function validateValueGetErrors(string $specName, $value): array
     {
-        return $this->getSpec($specName)->validateGetErrors($value);
+        try {
+            $this->getSpec($specName)->parse($value);
+        } catch (ParseSpecException $ex) {
+            return $ex->getErrors();
+        }
+
+        return [];
     }
 }

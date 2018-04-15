@@ -22,14 +22,15 @@ class NullSpec extends TypeSpec
         return [];
     }
 
-    public function validateGetErrors($value): array
+    public function parse($value)
     {
         $errors = [];
 
         if ($value !== null) {
             $errors[] = [ParseSpecException::CODE_NULL_EXPECTED, "Expected null value for 'null' type spec, but " . gettype($value) . " given."];
+            throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
         }
 
-        return $errors;
+        return $value;
     }
 }

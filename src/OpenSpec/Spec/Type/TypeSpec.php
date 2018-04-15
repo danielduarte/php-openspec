@@ -4,12 +4,13 @@ namespace OpenSpec\Spec\Type;
 
 use OpenSpec\ParseSpecException;
 use OpenSpec\Spec\Spec;
+use OpenSpec\SpecBuilder;
 use OpenSpec\SpecLibrary;
 
 
-abstract class TypeSpec implements Spec
+abstract class TypeSpec extends Spec
 {
-    protected $_library = null;
+    protected $_anySpec = null;
 
     public function __construct(array $specData, SpecLibrary $library)
     {
@@ -28,16 +29,26 @@ abstract class TypeSpec implements Spec
 
     public abstract function getOptionalFields(): array;
 
-    public function getSpecLibrary(): SpecLibrary
+    protected function _getAnySpec()
     {
-        return $this->_library;
-    }
+        if ($this->_anySpec === null) {
+            $anySpecData = [
+                'type' => 'mixed',
+                'options' => [
+                    ['type' => 'null'],
+                    ['type' => 'boolean'],
+                    ['type' => 'string'],
+                    ['type' => 'integer'],
+                    ['type' => 'float'],
+                    ['type' => 'array'], // Array option must be before object, to avoid generating objects when they're "normal" arrays.
+                    ['type' => 'object', 'extensible' => true],
+                ],
+            ];
 
-    public function validate($value): bool
-    {
-        $errors = $this->validateGetErrors($value);
+            $this->_anySpec = SpecBuilder::getInstance()->build($anySpecData, $this->_library);
+        }
 
-        return count($errors) === 0;
+        return $this->_anySpec;
     }
 
     public function getAllFields(): array
