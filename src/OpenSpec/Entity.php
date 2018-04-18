@@ -13,8 +13,19 @@ class Entity
 
     public function __construct(ObjectSpec $spec, array $data)
     {
+        // @todo check if this validation should be here
+//        $errors = $spec->validate($data);
+//        if (count($errors) > 0) {
+//            throw new \GenericEntity\SpecException('Not valid data for the specification.', $errors);
+//        }
+
         $this->_spec = $spec;
         $this->_data = $data;
+    }
+
+    public function getData()
+    {
+        return $this->_data;
     }
 
     public function __call(string $name, array $arguments)
@@ -24,8 +35,13 @@ class Entity
         // @todo check what happens with fields that started originally with uppercase
         $fieldName = lcfirst($matches[1]);
 
-        if (!$this->_spec->isValidFieldName($fieldName)) {
-            throw new \RuntimeException('Call to undefined method ' . Entity::class . '::' . $name);
+        return $this->getFieldData($fieldName);
+    }
+
+    public function getFieldData($fieldName)
+    {
+        if (!$this->isValidFieldName($fieldName)) {
+            throw new \RuntimeException("Field $fieldName not exists.");
         }
 
         if (array_key_exists($fieldName, $this->_data)) {
@@ -34,5 +50,10 @@ class Entity
 
         // @todo Add support to define default values by field (in ObjectSpec)
         return null; // Default value for valid fields
+    }
+
+    public function isValidFieldName($fieldName)
+    {
+        return $this->_spec->isValidFieldName($fieldName);
     }
 }

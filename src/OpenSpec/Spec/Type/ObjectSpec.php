@@ -7,6 +7,7 @@ use OpenSpec\ParseSpecException;
 use OpenSpec\Entity;
 
 
+// @todo see if should check that objects does not have fields duplicated
 class ObjectSpec extends TypeSpec
 {
     protected $_fieldSpecs = [];
