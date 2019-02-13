@@ -43,7 +43,11 @@ class ObjectSpec extends TypeSpec
 
     public function isValidFieldName(string $fieldName): bool
     {
-        // @todo should the string $fieldName be checked to make sure it is a valid identifier?
+        // @todo Should the string $fieldName be checked to make sure it is a valid identifier?
+
+        if (array_key_exists($fieldName, $this->_fieldSpecs)) {
+            return true;
+        }
 
         if ($this->_extensible) {
 
@@ -58,7 +62,7 @@ class ObjectSpec extends TypeSpec
             return true;
         }
 
-        return array_key_exists($fieldName, $this->_fieldSpecs);
+        return false;
     }
 
     protected function _validateFieldSpecData_fields($fieldValue): array
@@ -203,7 +207,7 @@ class ObjectSpec extends TypeSpec
                 throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
             }
 
-            if ($this->_extensionFieldNamesPattern !== null) {
+            if (!$fieldHasSpec && $this->_extensionFieldNamesPattern !== null) {
 
                 $matches = [];
                 $matchResult = preg_match($this->_extensionFieldNamesPattern, $fieldKey, $matches);
