@@ -15,6 +15,7 @@ class ParseSpecException extends RuntimeException
     const CODE_INVALID_TYPE_NAME_TYPE                  =  6;
     const CODE_UNEXPECTED_FIELDS                       =  9;
     const CODE_MISSING_REQUIRED_FIELD                  =  8;
+    const CODE_MISSING_NEEDED_FIELD                    = 18; // This is not the same as CODE_MISSING_REQUIRED_FIELD since this is for fields that are needed by other fields specified
     const CODE_INVALID_TYPE_NAME                       = 10;
     const CODE_EXTENSIBLE_EXPECTED                     = 11;
     const CODE_INVALID_REGEX_FOR_EXTENSIBLE_FIELDNAMES = 17;

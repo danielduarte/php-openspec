@@ -172,7 +172,7 @@ final class ObjectParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_EXTENSIBLE_EXPECTED));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_MISSING_NEEDED_FIELD));
     }
 
     public function testExtensionFieldsWithExtensibleFalse()

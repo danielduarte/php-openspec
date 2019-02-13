@@ -140,7 +140,25 @@ abstract class TypeSpec extends Spec
             // Check if at least one field was processed. If not, it means a cyclic reference was detected
             $pendingCount = count($pendingFields);
             if ($pendingCount === $prevPendingCount) {
-                throw new \Exception('Cyclic reference found in field dependences.');
+
+                $neededFieldErrors = [];
+                foreach ($pendingFields as $pendingField) {
+                    if (array_key_exists($pendingField, $depends)) {
+                        $neededFields = array_diff($depends[$pendingField], $fields);
+                        if (count($neededFields) > 0) {
+                            $neededFieldsStr = '\'' . implode('\', \'', $neededFields) . '\'';
+                            $neededFieldErrors[] = [ParseSpecException::CODE_MISSING_NEEDED_FIELD, "Invalid spec data. Not specified field(s) $neededFieldsStr required as dependence for specified field '$pendingField'."];
+                        }
+                    }
+                }
+                $errors = array_merge($errors, $neededFieldErrors);
+
+                if (count($neededFieldErrors) > 0) {
+                    return $errors;
+                } else {
+                    // This error is not reported to the user since it would be an internal error in the OpenSpec library.
+                    throw new \Exception( 'Cyclic reference found in field dependences or missing needed fields.' );
+                }
             }
         }
 

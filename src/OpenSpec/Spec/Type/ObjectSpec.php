@@ -36,7 +36,8 @@ class ObjectSpec extends TypeSpec
 
     public function getFieldValidationDependencies(): array {
         return [
-            'extensionFieldNamesPattern' => ['extensible']
+            'extensionFields'            => ['extensible'], // 'extensionFields' needs 'extensible' to be processed first
+            'extensionFieldNamesPattern' => ['extensible'], // 'extensionFieldNamesPattern' needs 'extensible' to be processed first
         ];
     }
 
@@ -102,7 +103,6 @@ class ObjectSpec extends TypeSpec
     {
         $errors = [];
 
-        // @todo IMPORTANT check if $this->_extensible could have not been initialized yet
         if (!$this->_extensible) {
             $errors[] = [ParseSpecException::CODE_EXTENSIBLE_EXPECTED, "Field 'extensionFields' can only be used when 'extensible' is true."];
         }
@@ -121,7 +121,6 @@ class ObjectSpec extends TypeSpec
     {
         $errors = [];
 
-        // @todo IMPORTANT check if $this->_extensible could have not been initialized yet
         if (!$this->_extensible) {
             $errors[] = [ParseSpecException::CODE_EXTENSIBLE_EXPECTED, "Field 'extensionFieldNamesPattern' can only be used when 'extensible' is true."];
         }
