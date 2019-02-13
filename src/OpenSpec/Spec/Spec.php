@@ -10,9 +10,16 @@ abstract class Spec
 {
     protected $_library = null;
 
+    protected $_specData = null;
+
     public function getSpecLibrary(): SpecLibrary
     {
         return $this->_library;
+    }
+
+    public function getSpecData(): array
+    {
+        return $this->_specData;
     }
 
     public function validate($value, bool $throwExceptionOnInvalid = false): bool

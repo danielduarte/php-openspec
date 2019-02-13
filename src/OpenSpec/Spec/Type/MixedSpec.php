@@ -25,6 +25,10 @@ class MixedSpec extends TypeSpec
         return [];
     }
 
+    public function getFieldValidationDependencies(): array {
+        return [];
+    }
+
     protected function _validateFieldSpecData_options($fieldValue): array
     {
         $errors = [];

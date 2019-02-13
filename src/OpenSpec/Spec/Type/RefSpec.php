@@ -25,6 +25,10 @@ class RefSpec extends TypeSpec
         return [];
     }
 
+    public function getFieldValidationDependencies(): array {
+        return [];
+    }
+
     protected function _validateFieldSpecData_spec($fieldValue): array
     {
         $errors = [];

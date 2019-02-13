@@ -80,6 +80,6 @@ final class RefParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_UNEXPECTED_FIELDS));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_UNEXPECTED_FIELDS));
     }
 }

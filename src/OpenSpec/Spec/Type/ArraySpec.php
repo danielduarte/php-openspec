@@ -25,6 +25,10 @@ class ArraySpec extends TypeSpec
         return ['items'];
     }
 
+    public function getFieldValidationDependencies(): array {
+        return [];
+    }
+
     protected function _validateFieldSpecData_items($fieldValue): array
     {
         $errors = [];

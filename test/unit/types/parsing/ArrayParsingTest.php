@@ -84,7 +84,7 @@ final class ArrayParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_UNEXPECTED_FIELDS));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_UNEXPECTED_FIELDS));
     }
 
     public function testFieldItemsOfInvalidType()
@@ -98,7 +98,7 @@ final class ArrayParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
     }
 
     public function testValidArrayOfAny()

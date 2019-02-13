@@ -22,6 +22,10 @@ class StringSpec extends TypeSpec
         return [];
     }
 
+    public function getFieldValidationDependencies(): array {
+        return [];
+    }
+
     public function parse($value)
     {
         $errors = [];

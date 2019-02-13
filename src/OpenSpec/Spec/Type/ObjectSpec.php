@@ -7,16 +7,17 @@ use OpenSpec\ParseSpecException;
 use OpenSpec\Entity;
 
 
-// @todo see if should check that objects does not have fields duplicated
 class ObjectSpec extends TypeSpec
 {
     protected $_fieldSpecs = [];
 
-    protected $_requiredFields = [];
-
     protected $_extensible = false;
 
     protected $_extensionFieldsSpec = null;
+
+    protected $_extensionFieldNamesPattern = null;
+
+    protected $_requiredFields = [];
 
     public function getTypeName(): string
     {
@@ -30,13 +31,33 @@ class ObjectSpec extends TypeSpec
 
     public function getOptionalFields(): array
     {
-        return ['fields', 'extensible', 'extensionFields', 'requiredFields'];
+        return ['fields', 'extensible', 'extensionFields', 'extensionFieldNamesPattern', 'requiredFields'];
+    }
+
+    public function getFieldValidationDependencies(): array {
+        return [
+            'extensionFieldNamesPattern' => ['extensible']
+        ];
     }
 
     public function isValidFieldName(string $fieldName): bool
     {
         // @todo should the string $fieldName be checked to make sure it is a valid identifier?
-        return $this->_extensible || array_key_exists($fieldName, $this->_fieldSpecs);
+
+        if ($this->_extensible) {
+
+            if ($this->_extensionFieldNamesPattern !== null) {
+                $matches = [];
+                $matchResult = preg_match($this->_extensionFieldNamesPattern, $fieldName, $matches);
+                if ($matchResult === 0) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return array_key_exists($fieldName, $this->_fieldSpecs);
     }
 
     protected function _validateFieldSpecData_fields($fieldValue): array
@@ -68,7 +89,7 @@ class ObjectSpec extends TypeSpec
         $errors = [];
 
         if (!is_bool($fieldValue)) {
-            $errors[] = [ParseSpecException::CODE_INVALID_SPEC_DATA, "Boolean expected as value of 'extensible' field, but " . gettype($fieldValue) . " given."];
+            $errors[] = [ParseSpecException::CODE_BOOLEAN_EXPECTED, "Boolean expected as value of 'extensible' field, but " . gettype($fieldValue) . " given."];
             return $errors;
         }
 
@@ -86,11 +107,37 @@ class ObjectSpec extends TypeSpec
             $errors[] = [ParseSpecException::CODE_EXTENSIBLE_EXPECTED, "Field 'extensionFields' can only be used when 'extensible' is true."];
         }
 
+        // @todo Test if $fieldValue has an invalid type
         try {
             $this->_extensionFieldsSpec = SpecBuilder::getInstance()->build($fieldValue, $this->_library);
         } catch (ParseSpecException $ex) {
             $errors = $ex->getErrors();
         }
+
+        return $errors;
+    }
+
+    protected function _validateFieldSpecData_extensionFieldNamesPattern($fieldValue): array
+    {
+        $errors = [];
+
+        // @todo IMPORTANT check if $this->_extensible could have not been initialized yet
+        if (!$this->_extensible) {
+            $errors[] = [ParseSpecException::CODE_EXTENSIBLE_EXPECTED, "Field 'extensionFieldNamesPattern' can only be used when 'extensible' is true."];
+        }
+
+        if (!is_string($fieldValue)) {
+            $errors[] = [ParseSpecException::CODE_STRING_EXPECTED, "String expected as value of 'extensionFieldNamesPattern' field, but " . gettype($fieldValue) . " given."];
+            return $errors;
+        }
+
+        $phpRegex = '/' . $fieldValue . '/';
+        $isValidRegex = @preg_match($phpRegex, '') !== false;
+        if (!$isValidRegex) {
+            $errors[] = [ParseSpecException::CODE_INVALID_REGEX_FOR_EXTENSIBLE_FIELDNAMES, "Field 'extensionFieldNamesPattern' must be a valid regular expression in PCRE format."];
+        }
+
+        $this->_extensionFieldNamesPattern = $phpRegex;
 
         return $errors;
     }
@@ -131,6 +178,8 @@ class ObjectSpec extends TypeSpec
 
         $errors = [];
 
+        // @todo Analyze if some exceptions in this method could not be thrown immediately and instead continue the parsing collecting errors in $errors.
+
         if (!is_array($value)) {
             $errors[] = [ParseSpecException::CODE_ARRAY_EXPECTED, "Expected map-array as value for object spec, but " . gettype($value) . " given."];
             throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
@@ -154,6 +203,17 @@ class ObjectSpec extends TypeSpec
                 $errors[] = [ParseSpecException::CODE_UNEXPECTED_FIELDS, "Unexpected field '$fieldKey' in value for object spec."];
                 throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
             }
+
+            if ($this->_extensionFieldNamesPattern !== null) {
+
+                $matches = [];
+                $matchResult = preg_match($this->_extensionFieldNamesPattern, $fieldKey, $matches);
+                if ($matchResult === 0) {
+                    $errors[] = [ParseSpecException::CODE_UNEXPECTED_FIELDS, "Fields '$fieldKey' in value for object spec does not match the required pattern '$this->_extensionFieldNamesPattern'."];
+                    throw new ParseSpecException('Could not parse the value', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
+                }
+            }
+
             if ($fieldHasSpec) {
                 $fieldSpec = $this->_fieldSpecs[$fieldKey];
             } elseif ($this->_extensionFieldsSpec !== null) {
@@ -162,7 +222,7 @@ class ObjectSpec extends TypeSpec
                 $fieldSpec = $this->_getAnySpec();
             }
 
-                $parsedValue[$fieldKey] = $fieldSpec->parse($fieldValue);
+            $parsedValue[$fieldKey] = $fieldSpec->parse($fieldValue);
         }
 
         return new Entity($this, $parsedValue);

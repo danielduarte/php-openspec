@@ -55,7 +55,7 @@ final class ObjectParsingTest extends TestCase
 
         $fields = $spec->getOptionalFields();
         sort($fields);
-        $this->assertEquals($fields, ['extensible', 'extensionFields', 'fields', 'requiredFields']);
+        $this->assertEquals($fields, ['extensible', 'extensionFieldNamesPattern', 'extensionFields', 'fields', 'requiredFields']);
     }
 
     public function testSpecAllFields()
@@ -88,7 +88,7 @@ final class ObjectParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_UNEXPECTED_FIELDS));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_UNEXPECTED_FIELDS));
     }
 
     public function testFieldFieldsOfInvalidType()
@@ -102,7 +102,7 @@ final class ObjectParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
     }
 
     public function testFieldRequiredFieldsOfInvalidType()
@@ -116,7 +116,7 @@ final class ObjectParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
     }
 
     public function testFieldRequiredFieldsWithInvalidItems()
@@ -130,7 +130,7 @@ final class ObjectParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_STRING_EXPECTED));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_STRING_EXPECTED));
     }
 
     public function testFieldExtensibleOfInvalidType()
@@ -144,7 +144,7 @@ final class ObjectParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_INVALID_SPEC_DATA));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_BOOLEAN_EXPECTED));
     }
 
     public function testFieldExtensionFieldsOfInvalidType()
@@ -158,7 +158,7 @@ final class ObjectParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_ARRAY_EXPECTED));
     }
 
     public function testExtensionFieldsWithoutExtensible()
@@ -172,7 +172,7 @@ final class ObjectParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_EXTENSIBLE_EXPECTED));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_EXTENSIBLE_EXPECTED));
     }
 
     public function testExtensionFieldsWithExtensibleFalse()
@@ -186,7 +186,7 @@ final class ObjectParsingTest extends TestCase
             $exception = $ex;
         }
 
-        $this->assertTrue($exception->containsError(ParseSpecException::CODE_EXTENSIBLE_EXPECTED));
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_EXTENSIBLE_EXPECTED));
     }
 
     public function testValidObjectWithNoFieldSpecs()
@@ -201,5 +201,61 @@ final class ObjectParsingTest extends TestCase
         }
 
         $this->assertTrue(count($errors) === 0, "Spec for object with no field specs not validates as expected.");
+    }
+
+    public function testExtensionFieldsWithValidPattern()
+    {
+        // @todo Create test for invalid regexs in 'extensionFieldNamesPattern'
+        $specData = [
+            'type' => 'object',
+            'extensible' => true,
+            'extensionFieldNamesPattern' => '^x-'
+        ];
+
+        $exception = null;
+        try {
+            SpecBuilder::getInstance()->build($specData, new SpecLibrary());
+            $errors = [];
+        } catch (ParseSpecException $ex) {
+            $errors = $ex->getErrors();
+        }
+
+        $this->assertTrue(count($errors) === 0, "Spec for object with extension field names with pattern not validates as expected:" . PHP_EOL . '- ' . implode(PHP_EOL . '- ', array_column($errors, 1)));
+    }
+
+    public function testExtensionFieldsWithInvalidPatternType()
+    {
+        $specData = [
+            'type' => 'object',
+            'extensible' => true,
+            'extensionFieldNamesPattern' => 12345
+        ];
+
+        $exception = null;
+        try {
+            SpecBuilder::getInstance()->build($specData, new SpecLibrary());
+        } catch (ParseSpecException $ex) {
+            $exception = $ex;
+        }
+
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_STRING_EXPECTED), "Expected invalid regular expression type for 'extensionFieldNamesPattern'.");
+    }
+
+    public function testExtensionFieldsWithInvalidRegexPattern()
+    {
+        $specData = [
+            'type' => 'object',
+            'extensible' => true,
+            'extensionFieldNamesPattern' => '/'
+        ];
+
+        $exception = null;
+        try {
+            SpecBuilder::getInstance()->build($specData, new SpecLibrary());
+        } catch (ParseSpecException $ex) {
+            $exception = $ex;
+        }
+
+        $this->assertTrue($exception !== null && $exception->containsError(ParseSpecException::CODE_INVALID_REGEX_FOR_EXTENSIBLE_FIELDNAMES), "Expected invalid regular expression for 'extensionFieldNamesPattern'.");
     }
 }

@@ -21,6 +21,7 @@ class OpenSpec extends Spec
     {
         $this->_library = new SpecLibrary();
 
+        $this->_specData = $specData;
         $errors = $this->_validateSpecData($specData);
         if (count($errors) > 0) {
             throw new ParseSpecException('Invalid spec data.', ParseSpecException::CODE_MULTIPLE_PARSER_ERROR, $errors);
@@ -49,10 +50,10 @@ class OpenSpec extends Spec
             SpecBuilder::getInstance()->build([
                 'type' => 'object',
                 'fields' => [
-                    'openspec' => ['type' => 'string'],
-                    'name' => ['type' => 'string'],
-                    'version' => ['type' => 'string'],
-                    'spec' => ['type' => 'object', 'extensible' => true],
+                    'openspec'    => ['type' => 'string'],
+                    'name'        => ['type' => 'string'],
+                    'version'     => ['type' => 'string'],
+                    'spec'        => ['type' => 'object', 'extensible' => true],
                     'definitions' => ['type' => 'object', 'extensible' => true],
                 ],
                 'requiredFields' => ['openspec', 'name', 'spec']

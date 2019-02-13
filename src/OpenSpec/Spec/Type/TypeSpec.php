@@ -16,6 +16,7 @@ abstract class TypeSpec extends Spec
     {
         $this->_library = $library;
 
+        $this->_specData = $specData;
         $errors = $this->_validateSpecData($specData);
 
         if (count($errors) > 0) {
@@ -29,6 +30,8 @@ abstract class TypeSpec extends Spec
 
     public abstract function getOptionalFields(): array;
 
+    public abstract function getFieldValidationDependencies(): array;
+
     protected function _getAnySpec()
     {
         if ($this->_anySpec === null) {
@@ -40,7 +43,7 @@ abstract class TypeSpec extends Spec
                     ['type' => 'string'],
                     ['type' => 'integer'],
                     ['type' => 'float'],
-                    ['type' => 'array'], // Array option must be before object, to avoid generating objects when they're "normal" arrays.
+                    ['type' => 'array'], // Array option must be before object, to avoid generating objects when they are "usual" arrays.
                     ['type' => 'object', 'extensible' => true],
                 ],
             ];
@@ -86,6 +89,7 @@ abstract class TypeSpec extends Spec
             $errors[] = [ParseSpecException::CODE_UNEXPECTED_FIELDS, "Invalid spec data. Unexpected field(s) $unexpectedFieldsStr."];
         }
 
+        // Check for specific fields according to type implementations
         $validGivenFields = array_diff($givenFields, $unexpectedFields);
         $fieldsErrors = $this->_validateFieldsSpecData($specData, $validGivenFields);
         $errors = array_merge($errors, $fieldsErrors);
@@ -97,10 +101,47 @@ abstract class TypeSpec extends Spec
     {
         $errors = [];
 
-        foreach ($fields as $field) {
-            $fieldValidationMethodName = '_validateFieldSpecData_' . $field;
-            $fieldErrors = $this->$fieldValidationMethodName($specData[$field]);
-            $errors = array_merge($errors, $fieldErrors);
+        $depends = array_filter($this->getFieldValidationDependencies());
+
+        $pendingFields = $fields;
+        $pendingCount = count($pendingFields);
+
+        while ($pendingCount > 0) {
+
+            $prevPendingCount = $pendingCount;
+
+            $fieldsToProcess = $pendingFields;
+            $pendingFields = [];
+            foreach ($fieldsToProcess as $field) {
+
+                // Check if the field has no dependencies
+                if (!array_key_exists($field, $depends)) {
+
+                    // If the field is independent or has all dependencies satisfied, run its validation
+                    $fieldValidationMethodName = '_validateFieldSpecData_' . $field;
+                    $fieldErrors = $this->$fieldValidationMethodName($specData[$field]);
+                    $errors = array_merge($errors, $fieldErrors);
+
+                    // Mark the processed field as satisfied dependence for other fields not processed yet
+                    array_walk($depends, function (&$fieldDeps) use ($field) {
+                        $fieldDeps = array_diff($fieldDeps, [$field]);
+                    });
+
+                    // Cleanup to remove empty dependencies
+                    $depends = array_filter($depends);
+
+                } else {
+
+                    // If the field has unsatisfied dependencies, it is put back to the processing list
+                    $pendingFields[] = $field;
+                }
+            }
+
+            // Check if at least one field was processed. If not, it means a cyclic reference was detected
+            $pendingCount = count($pendingFields);
+            if ($pendingCount === $prevPendingCount) {
+                throw new \Exception('Cyclic reference found in field dependences.');
+            }
         }
 
         return $errors;

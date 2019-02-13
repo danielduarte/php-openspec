@@ -5,6 +5,7 @@ use OpenSpec\SpecBuilder;
 use OpenSpec\Spec\Type\TypeSpec;
 use OpenSpec\SpecLibrary;
 
+// @todo Add tests for required fields
 
 final class ObjectValidationTest extends TestCase
 {
@@ -87,6 +88,70 @@ final class ObjectValidationTest extends TestCase
 
         $result = $spec->validate($value);
         $this->assertTrue($result, "Given value not recognized by the spec, even when it should.");
+    }
+
+    public function testValidExtensionFieldWithFieldNamePatternSpec()
+    {
+        $specData = [
+            'type'                       => 'object',
+            'extensible'                 => true,
+            'extensionFieldNamesPattern' => '^new-field-'
+        ];
+
+        $value = [
+            'new-field-1' => true,
+            'new-field-2' => false,
+            'new-field-3' => 'something',
+        ];
+
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
+
+        $result = $spec->validate($value);
+        $this->assertTrue($result, "Given value not recognized by the spec, even when it should.");
+    }
+
+    public function testInvalidExtensionFieldWithFieldNamePatternSpec()
+    {
+        $specData = [
+            'type'                       => 'object',
+            'extensible'                 => true,
+            'extensionFieldNamesPattern' => '^new-field-'
+        ];
+
+        $value = [
+            'new-field-VALID-1'         => 1,
+            'new-field-VALID-2'         => 2,
+            'other-new-field-INVALID-1' => 3,
+            'new-field-VALID-3'         => 4,
+            'other-new-field-INVALID-2' => 5,
+        ];
+
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
+
+        $result = $spec->validate($value);
+        $this->assertTrue(!$result, "Given value recognized by the spec, even when it should not.");
+    }
+
+    public function testUnusualSpecFieldsOrder()
+    {
+        $specData = [
+            'extensionFieldNamesPattern' => '^new-field-',
+            'extensible'                 => true,
+            'type'                       => 'object'
+        ];
+
+        $value = [
+            'new-field-VALID-1'         => 1,
+            'new-field-VALID-2'         => 2,
+            'other-new-field-INVALID-1' => 3,
+            'new-field-VALID-3'         => 4,
+            'other-new-field-INVALID-2' => 5,
+        ];
+
+        $spec = SpecBuilder::getInstance()->build($specData, new SpecLibrary());
+
+        $result = $spec->validate($value);
+        $this->assertTrue(!$result, "Given value recognized by the spec, even when it should not.");
     }
 
     public function testValidValueWithNumericStringKeys()
